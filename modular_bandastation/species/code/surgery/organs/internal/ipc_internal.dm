@@ -140,18 +140,6 @@
 	if(!owner)
 		return
 	charge = max(0, charge - 2.78 * seconds_per_tick)
-	// Алерты заряда (как у боргов)
-	var/charge_ratio = charge / maxcharge
-	if(charge_ratio >= 0.75)
-		owner.clear_alert(ALERT_CHARGE)
-	else if(charge_ratio >= 0.5)
-		owner.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/lowcell, 1)
-	else if(charge_ratio >= 0.25)
-		owner.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/lowcell, 2)
-	else if(charge_ratio > 0)
-		owner.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/lowcell, 3)
-	else
-		owner.throw_alert(ALERT_CHARGE, /atom/movable/screen/alert/emptycell)
 	SEND_SIGNAL(owner, COMSIG_IPC_BATTERY_UPDATED)
 
 /obj/item/organ/heart/ipc_battery/emp_act(severity)

@@ -64,7 +64,7 @@
 	icon_state = "ipc_head"
 	icon_greyscale = 'icons/bandastation/mob/species/ipc/bodyparts.dmi'
 	limb_id = SPECIES_IPC
-	head_flags = HEAD_LIPS|HEAD_DEBRAIN|HEAD_HAIR
+	head_flags = HEAD_LIPS|HEAD_DEBRAIN
 	is_dimorphic = FALSE
 	biological_state = BIO_ROBOTIC
 	bodytype = BODYTYPE_IPC
@@ -211,18 +211,6 @@
 	. = ..()
 	AddComponent(/datum/component/ipc_panel)
 	AddComponent(/datum/component/ipc_bodypart)
-
-// ============================================
-// УРОН И СПАРКИ
-// ============================================
-
-/// Общая логика IPC урона
-/// Вызывается из каждого receive_damage вместо дублирования кода.
-/obj/item/bodypart/proc/ipc_on_receive_damage(brute, burn)
-	if(brute > 10 || burn > 10)
-		do_sparks(3, TRUE, src)
-	if(get_damage() >= max_damage * 0.8 && owner && prob(20))
-		to_chat(owner, span_danger("ПРЕДУПРЕЖДЕНИЕ: Критическое повреждение [name]!"))
 
 // ============================================
 // ПРИСОЕДИНЕНИЕ КОНЕЧНОСТЕЙ

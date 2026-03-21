@@ -77,8 +77,6 @@
 	// Обновление HUD при изменении заряда батареи — сигнал от органа
 	// override = TRUE защищает от дублирования если on_species_gain вызван повторно
 	RegisterSignal(H, COMSIG_IPC_BATTERY_UPDATED, PROC_REF(on_battery_updated), override = TRUE)
-	// Перехват инструментов на мобе — маршрутизация к компоненту панели нужного бодипарта
-	RegisterSignal(H, COMSIG_ATOM_ITEM_INTERACTION, PROC_REF(on_mob_item_interact), override = TRUE)
 	if(H.hud_used)
 		add_ipc_battery_hud(H)
 
@@ -93,7 +91,6 @@
 		COMSIG_PROCESS_BORGCHARGER_OCCUPANT,
 		COMSIG_MOB_HUD_CREATED,
 		COMSIG_IPC_BATTERY_UPDATED,
-		COMSIG_ATOM_ITEM_INTERACTION,
 	))
 	remove_ipc_battery_hud(H)
 	if(istype(H.mob_mood, /datum/mood/ipc_neutral))
@@ -107,20 +104,6 @@
 	if(!bat || !bat.proxy_cell)
 		return
 	charge_cell.Invoke(bat.proxy_cell, seconds_per_tick)
-
-/// Перехват кабеля на IPC — для кабеля нет tool_behaviour, только сигнал.
-/datum/species/ipc/proc/on_mob_item_interact(mob/living/carbon/human/H, mob/living/user, obj/item/tool, list/modifiers)
-	SIGNAL_HANDLER
-	if(!istype(tool, /obj/item/stack/cable_coil))
-		return
-	var/obj/item/bodypart/BP = H.get_bodypart(user.zone_selected)
-	if(!BP || !(BP.bodytype & BODYTYPE_IPC))
-		return
-	var/datum/component/ipc_panel/panel = BP.GetComponent(/datum/component/ipc_panel)
-	if(!panel)
-		return
-	panel.try_repair_burn(BP, user, tool)
-	return ITEM_INTERACT_BLOCKING
 
 // ============================================
 // ВЗАИМОДЕЙСТВИЕ ИНСТРУМЕНТОВ С IPC
@@ -148,18 +131,6 @@
 		return ..()
 	return panel.try_prepare_electronics(BP, user)
 
-/mob/living/carbon/human/welder_act(mob/living/user, obj/item/tool)
-	if(!is_ipc())
-		return ..()
-	var/obj/item/bodypart/BP = get_bodypart(user.zone_selected)
-	if(!BP || !(BP.bodytype & BODYTYPE_IPC))
-		return ..()
-	var/datum/component/ipc_panel/panel = BP.GetComponent(/datum/component/ipc_panel)
-	if(!panel)
-		return ..()
-	panel.try_repair_brute(BP, user, tool)
-	return ITEM_INTERACT_BLOCKING
-
 /datum/species/ipc/proc/handle_emp(mob/living/carbon/human/H, severity)
 	var/emp_damage = 0
 	switch(severity)
@@ -182,9 +153,11 @@
 		var/datum/species/ipc/S = H.dna.species
 		S.handle_emp(H, severity)
 
-// Разрешаем цифры в именах (нужно для IPC-имён типа ARC-908)
-/datum/preference/name/real_name
-	allow_numbers = TRUE
+// Разрешаем цифры в именах для IPC (типа ARC-908), не затрагивая остальные расы
+/datum/preference/name/real_name/deserialize(input, datum/preferences/preferences)
+	if(preferences?.read_preference(/datum/preference/choiced/species) == /datum/species/ipc)
+		return reject_bad_name(input, TRUE)
+	return ..()
 
 /datum/preference/name/real_name/create_informed_default_value(datum/preferences/preferences)
 	if(preferences.read_preference(/datum/preference/choiced/species) == /datum/species/ipc)
@@ -205,9 +178,11 @@
 	return TRUE
 
 /datum/component/cult_ritual_item/can_scribe_rune(obj/item/tool, mob/living/cultist)
-	if(HAS_TRAIT(cultist, TRAIT_NOBLOOD))
-		to_chat(cultist, span_warning("Масло КПБ не является жертвенной субстанцией — руна не может быть начертана."))
-		return FALSE
+	if(ishuman(cultist))
+		var/mob/living/carbon/human/H = cultist
+		if(istype(H.dna?.species, /datum/species/ipc))
+			to_chat(cultist, span_warning("Масло КПБ не является жертвенной субстанцией — руна не может быть начертана."))
+			return FALSE
 	return ..()
 
 // ============================================
