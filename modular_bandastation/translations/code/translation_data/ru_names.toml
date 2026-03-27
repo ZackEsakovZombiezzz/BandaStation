@@ -33999,6 +33999,16 @@ instrumental = "редактором базового пространства �
 prepositional = "редакторе базового пространства виртуального домена"
 gender = "male"
 
+# MARK: IPC organs
+["ipc power cell"]
+nominative = "батарея КПБ"
+genitive = "батареи КПБ"
+dative = "батарее КПБ"
+accusative = "батарею КПБ"
+instrumental = "батареей КПБ"
+prepositional = "батарее КПБ"
+gender = "female"
+
 # MARK: IPC bodyparts
 ["ipc chassis"]
 nominative = "корпус КПБ"

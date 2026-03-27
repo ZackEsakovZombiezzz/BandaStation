@@ -99,8 +99,8 @@
 // ============================================
 
 /obj/item/organ/heart/ipc_battery
-	name = "IPC power cell"
-	desc = "Высокоемкая батарея, обеспечивающая питание всех систем IPC."
+	name = "ipc power cell"
+	desc = "Высокоёмкая батарея, обеспечивающая питание всех систем КПБ."
 	icon = 'modular_bandastation/MachAImpDe/icons/organs.dmi'
 	icon_state = "ipc_cell"
 	zone = BODY_ZONE_CHEST
