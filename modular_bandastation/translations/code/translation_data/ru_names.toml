@@ -33998,3 +33998,58 @@ accusative = "редактор базового пространства вир�
 instrumental = "редактором базового пространства виртуального домена"
 prepositional = "редакторе базового пространства виртуального домена"
 gender = "male"
+
+# MARK: IPC bodyparts
+["ipc chassis"]
+nominative = "корпус КПБ"
+genitive = "корпуса КПБ"
+dative = "корпусу КПБ"
+accusative = "корпус КПБ"
+instrumental = "корпусом КПБ"
+prepositional = "корпусе КПБ"
+gender = "male"
+
+["ipc head"]
+nominative = "голова КПБ"
+genitive = "головы КПБ"
+dative = "голове КПБ"
+accusative = "голову КПБ"
+instrumental = "головой КПБ"
+prepositional = "голове КПБ"
+gender = "female"
+
+["ipc left arm"]
+nominative = "левая рука КПБ"
+genitive = "левой руки КПБ"
+dative = "левой руке КПБ"
+accusative = "левую руку КПБ"
+instrumental = "левой рукой КПБ"
+prepositional = "левой руке КПБ"
+gender = "female"
+
+["ipc right arm"]
+nominative = "правая рука КПБ"
+genitive = "правой руки КПБ"
+dative = "правой руке КПБ"
+accusative = "правую руку КПБ"
+instrumental = "правой рукой КПБ"
+prepositional = "правой руке КПБ"
+gender = "female"
+
+["ipc left leg"]
+nominative = "левая нога КПБ"
+genitive = "левой ноги КПБ"
+dative = "левой ноге КПБ"
+accusative = "левую ногу КПБ"
+instrumental = "левой ногой КПБ"
+prepositional = "левой ноге КПБ"
+gender = "female"
+
+["ipc right leg"]
+nominative = "правая нога КПБ"
+genitive = "правой ноги КПБ"
+dative = "правой ноге КПБ"
+accusative = "правую ногу КПБ"
+instrumental = "правой ногой КПБ"
+prepositional = "правой ноге КПБ"
+gender = "female"
