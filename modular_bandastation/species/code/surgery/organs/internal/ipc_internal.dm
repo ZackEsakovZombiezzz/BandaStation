@@ -160,7 +160,7 @@
 
 /obj/item/organ/lungs/ipc
 	name = "cooling system"
-	desc = "Система охлаждения IPC. Регулирует температуру вычислительных блоков."
+	desc = "Система охлаждения КПБ. Регулирует температуру вычислительных блоков."
 	icon = 'modular_bandastation/MachAImpDe/icons/organs.dmi'
 	icon_state = "ipc_cooler"
 	zone = BODY_ZONE_CHEST
@@ -172,8 +172,8 @@
 // ============================================
 
 /obj/item/organ/eyes/robotic/ipc
-	name = "IPC optical sensors"
-	desc = "Оптические сенсоры IPC. Позволяют видеть в различных спектрах."
+	name = "ipc optical sensors"
+	desc = "Оптические сенсоры КПБ. Позволяют видеть в различных спектрах."
 	icon = 'modular_bandastation/MachAImpDe/icons/organs.dmi'
 	icon_state = "ipc_eyes"
 	organ_flags = ORGAN_ROBOTIC
@@ -183,8 +183,8 @@
 // ============================================
 
 /obj/item/organ/ears/robot/ipc
-	name = "IPC audio sensors"
-	desc = "Аудио сенсоры IPC."
+	name = "ipc audio sensors"
+	desc = "Аудиосенсоры КПБ."
 	icon = 'icons/obj/medical/organs/organs.dmi'
 	icon_state = "ears-c"
 	base_icon_state = "ears-c"
@@ -195,8 +195,8 @@
 // ============================================
 
 /obj/item/organ/tongue/robot/ipc
-	name = "IPC vocal synthesizer"
-	desc = "Голосовой синтезатор IPC."
+	name = "ipc vocal synthesizer"
+	desc = "Голосовой синтезатор КПБ."
 	icon = 'modular_bandastation/MachAImpDe/icons/organs.dmi'
 	icon_state = "ipc_voicebox"
 	organ_flags = ORGAN_ROBOTIC

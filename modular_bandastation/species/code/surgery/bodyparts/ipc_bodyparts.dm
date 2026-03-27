@@ -106,7 +106,7 @@
 		internal_organ.forceMove(drop_location)
 
 /obj/item/bodypart/head/ipc/monitor
-	name = "Голова-монитор КПБ"
+	name = "ipc monitor head"
 	desc = "Голова-монитор КПБ с встроенным дисплеем вместо лица."
 	ipc_visual_state = "monitor"
 

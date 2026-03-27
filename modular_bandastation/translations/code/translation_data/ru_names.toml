@@ -34000,6 +34000,33 @@ prepositional = "редакторе базового пространства в
 gender = "male"
 
 # MARK: IPC organs
+["positronic brain"]
+nominative = "позитронный мозг"
+genitive = "позитронного мозга"
+dative = "позитронному мозгу"
+accusative = "позитронный мозг"
+instrumental = "позитронным мозгом"
+prepositional = "позитронном мозге"
+gender = "male"
+
+["MMI-based positronic core"]
+nominative = "позитронное ядро с MMI"
+genitive = "позитронного ядра с MMI"
+dative = "позитронному ядру с MMI"
+accusative = "позитронное ядро с MMI"
+instrumental = "позитронным ядром с MMI"
+prepositional = "позитронном ядре с MMI"
+gender = "neuter"
+
+["borg module positronic core"]
+nominative = "позитронное ядро с модулем борга"
+genitive = "позитронного ядра с модулем борга"
+dative = "позитронному ядру с модулем борга"
+accusative = "позитронное ядро с модулем борга"
+instrumental = "позитронным ядром с модулем борга"
+prepositional = "позитронном ядре с модулем борга"
+gender = "neuter"
+
 ["ipc power cell"]
 nominative = "батарея КПБ"
 genitive = "батареи КПБ"
@@ -34009,7 +34036,52 @@ instrumental = "батареей КПБ"
 prepositional = "батарее КПБ"
 gender = "female"
 
+["cooling system"]
+nominative = "система охлаждения КПБ"
+genitive = "системы охлаждения КПБ"
+dative = "системе охлаждения КПБ"
+accusative = "систему охлаждения КПБ"
+instrumental = "системой охлаждения КПБ"
+prepositional = "системе охлаждения КПБ"
+gender = "female"
+
+["ipc optical sensors"]
+nominative = "оптические сенсоры КПБ"
+genitive = "оптических сенсоров КПБ"
+dative = "оптическим сенсорам КПБ"
+accusative = "оптические сенсоры КПБ"
+instrumental = "оптическими сенсорами КПБ"
+prepositional = "оптических сенсорах КПБ"
+gender = "male"
+
+["ipc audio sensors"]
+nominative = "аудиосенсоры КПБ"
+genitive = "аудиосенсоров КПБ"
+dative = "аудиосенсорам КПБ"
+accusative = "аудиосенсоры КПБ"
+instrumental = "аудиосенсорами КПБ"
+prepositional = "аудиосенсорах КПБ"
+gender = "male"
+
+["ipc vocal synthesizer"]
+nominative = "голосовой синтезатор КПБ"
+genitive = "голосового синтезатора КПБ"
+dative = "голосовому синтезатору КПБ"
+accusative = "голосовой синтезатор КПБ"
+instrumental = "голосовым синтезатором КПБ"
+prepositional = "голосовом синтезаторе КПБ"
+gender = "male"
+
 # MARK: IPC bodyparts
+["ipc monitor head"]
+nominative = "голова-монитор КПБ"
+genitive = "головы-монитора КПБ"
+dative = "голове-монитору КПБ"
+accusative = "голову-монитор КПБ"
+instrumental = "головой-монитором КПБ"
+prepositional = "голове-мониторе КПБ"
+gender = "female"
+
 ["ipc chassis"]
 nominative = "корпус КПБ"
 genitive = "корпуса КПБ"
