@@ -34000,15 +34000,6 @@ prepositional = "редакторе базового пространства в
 gender = "male"
 
 # MARK: IPC organs
-["positronic brain"]
-nominative = "позитронный мозг"
-genitive = "позитронного мозга"
-dative = "позитронному мозгу"
-accusative = "позитронный мозг"
-instrumental = "позитронным мозгом"
-prepositional = "позитронном мозге"
-gender = "male"
-
 ["MMI-based positronic core"]
 nominative = "позитронное ядро с MMI"
 genitive = "позитронного ядра с MMI"
