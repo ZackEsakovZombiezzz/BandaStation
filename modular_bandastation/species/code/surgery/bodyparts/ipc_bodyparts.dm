@@ -1,25 +1,4 @@
 // ============================================
-// КОМПОНЕНТ IPC БОДИПАРТА
-// ============================================
-
-/datum/component/ipc_bodypart
-	dupe_mode = COMPONENT_DUPE_UNIQUE
-
-/datum/component/ipc_bodypart/Initialize(mapload)
-	. = ..()
-	if(!istype(parent, /obj/item/bodypart))
-		return COMPONENT_INCOMPATIBLE
-	RegisterSignal(parent, COMSIG_ATOM_EXAMINE, PROC_REF(on_examine))
-
-/datum/component/ipc_bodypart/proc/on_examine(datum/source, mob/user, list/examine_list)
-	SIGNAL_HANDLER
-	var/datum/component/ipc_panel/panel = parent.GetComponent(/datum/component/ipc_panel)
-	if(panel?.is_panel_open())
-		examine_list += span_notice("Панель доступа открыта.")
-	else
-		examine_list += span_notice("Панель доступа закрыта.")
-
-// ============================================
 // БАЗОВЫЕ ЧАСТИ ТЕЛА IPC
 // ============================================
 
@@ -33,17 +12,12 @@
 	limb_id = SPECIES_IPC
 	is_dimorphic = TRUE
 	biological_state = BIO_ROBOTIC
-	bodytype = BODYTYPE_IPC
+	bodytype = BODYTYPE_ROBOTIC
 	max_damage = 120
 
 	var/chassis_type = "Unbranded"
 	var/brute_reduction = 0
 	var/burn_reduction = 0
-
-/obj/item/bodypart/chest/ipc/Initialize(mapload)
-	. = ..()
-	AddComponent(/datum/component/ipc_panel)
-	AddComponent(/datum/component/ipc_bodypart)
 
 /obj/item/bodypart/chest/ipc/drop_organs(mob/user, violent_removal)
 	. = ..()
@@ -67,7 +41,7 @@
 	head_flags = HEAD_LIPS|HEAD_DEBRAIN
 	is_dimorphic = FALSE
 	biological_state = BIO_ROBOTIC
-	bodytype = BODYTYPE_IPC
+	bodytype = BODYTYPE_ROBOTIC
 	max_damage = 80
 
 	var/screen_icon = "BSOD"
@@ -92,11 +66,6 @@
 	body_zone = ipc_visual_state
 	. = ..()
 	body_zone = old_body_zone
-
-/obj/item/bodypart/head/ipc/Initialize(mapload)
-	. = ..()
-	AddComponent(/datum/component/ipc_panel)
-	AddComponent(/datum/component/ipc_bodypart)
 
 /obj/item/bodypart/head/ipc/drop_organs(mob/user, violent_removal)
 	. = ..()
@@ -123,7 +92,7 @@
 	icon_greyscale = 'icons/bandastation/mob/species/ipc/bodyparts.dmi'
 	limb_id = SPECIES_IPC
 	biological_state = BIO_ROBOTIC
-	bodytype = BODYTYPE_IPC
+	bodytype = BODYTYPE_ROBOTIC
 	max_damage = 70
 
 	var/grip_strength = 1.0
@@ -131,10 +100,6 @@
 	var/brute_reduction = 0
 	var/burn_reduction = 0
 
-/obj/item/bodypart/arm/left/ipc/Initialize(mapload)
-	. = ..()
-	AddComponent(/datum/component/ipc_panel)
-	AddComponent(/datum/component/ipc_bodypart)
 
 // ============================================
 // ПРАВАЯ РУКА
@@ -149,18 +114,13 @@
 	icon_greyscale = 'icons/bandastation/mob/species/ipc/bodyparts.dmi'
 	limb_id = SPECIES_IPC
 	biological_state = BIO_ROBOTIC
-	bodytype = BODYTYPE_IPC
+	bodytype = BODYTYPE_ROBOTIC
 	max_damage = 70
 
 	var/grip_strength = 1.0
 	var/chassis_type = "Unbranded"
 	var/brute_reduction = 0
 	var/burn_reduction = 0
-
-/obj/item/bodypart/arm/right/ipc/Initialize(mapload)
-	. = ..()
-	AddComponent(/datum/component/ipc_panel)
-	AddComponent(/datum/component/ipc_bodypart)
 
 // ============================================
 // ЛЕВАЯ НОГА
@@ -175,17 +135,12 @@
 	icon_greyscale = 'icons/bandastation/mob/species/ipc/bodyparts.dmi'
 	limb_id = SPECIES_IPC
 	biological_state = BIO_ROBOTIC
-	bodytype = BODYTYPE_IPC
+	bodytype = BODYTYPE_ROBOTIC
 	max_damage = 70
 
 	var/chassis_type = "Unbranded"
 	var/brute_reduction = 0
 	var/burn_reduction = 0
-
-/obj/item/bodypart/leg/left/ipc/Initialize(mapload)
-	. = ..()
-	AddComponent(/datum/component/ipc_panel)
-	AddComponent(/datum/component/ipc_bodypart)
 
 // ============================================
 // ПРАВАЯ НОГА
@@ -200,17 +155,12 @@
 	icon_greyscale = 'icons/bandastation/mob/species/ipc/bodyparts.dmi'
 	limb_id = SPECIES_IPC
 	biological_state = BIO_ROBOTIC
-	bodytype = BODYTYPE_IPC
+	bodytype = BODYTYPE_ROBOTIC
 	max_damage = 70
 
 	var/chassis_type = "Unbranded"
 	var/brute_reduction = 0
 	var/burn_reduction = 0
-
-/obj/item/bodypart/leg/right/ipc/Initialize(mapload)
-	. = ..()
-	AddComponent(/datum/component/ipc_panel)
-	AddComponent(/datum/component/ipc_bodypart)
 
 // ============================================
 // ПРИСОЕДИНЕНИЕ КОНЕЧНОСТЕЙ
