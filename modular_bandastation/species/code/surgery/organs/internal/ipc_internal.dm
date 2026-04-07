@@ -87,6 +87,10 @@
 	/// Батарея-владелец
 	var/obj/item/organ/heart/ipc_battery/battery_ref
 
+/obj/item/stock_parts/power_store/ipc_battery_proxy/Destroy(force)
+	battery_ref = null
+	return ..()
+
 /obj/item/stock_parts/power_store/ipc_battery_proxy/used_charge()
 	if(!battery_ref)
 		return 0
@@ -122,6 +126,10 @@
 	proxy_cell = new(src)
 	proxy_cell.battery_ref = src
 	proxy_cell.maxcharge = maxcharge
+
+/obj/item/organ/heart/ipc_battery/Destroy(force)
+	QDEL_NULL(proxy_cell)
+	return ..()
 
 /obj/item/organ/heart/ipc_battery/examine(mob/user)
 	. = ..()
