@@ -1,5 +1,8 @@
 #define COMSIG_IPC_BATTERY_UPDATED "ipc_battery_updated"
 
+/// HUD slot key for the IPC battery indicator
+#define HUD_MOB_IPC_BATTERY "mob_ipc_battery"
+
 /// Доля брут-урона от max_damage, при которой корпус считается вскрытым
 #define IPC_CHASSIS_BREACH_THRESHOLD 0.5
 /// Источник трейта защиты от давления — интактный корпус КПБ
