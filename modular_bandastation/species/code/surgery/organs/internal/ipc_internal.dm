@@ -190,6 +190,7 @@
 	icon = 'modular_bandastation/MachAImpDe/icons/organs.dmi'
 	icon_state = "ipc_eyes"
 	organ_flags = ORGAN_ROBOTIC
+	flash_protect = FLASH_PROTECTION_WELDER
 
 // ============================================
 // УШИ
