@@ -89,11 +89,6 @@
 	// Ключ визуального бренда (используется только для HEF, иначе = ipc_brand_key)
 	var/ipc_visual_brand_key = "unbranded"
 
-	// Операционная система IPC
-	var/datum/ipc_operating_system/ipc_os
-	// Пароль ОС из настроек персонажа (применяется при инициализации ОС)
-	var/ipc_preset_os_password = ""
-
 	// HEF: поштучный выбор бренда для каждой части тела.
 	var/hef_head = "unbranded"
 	var/hef_chest = "unbranded"
@@ -177,16 +172,6 @@
 	RegisterSignal(H, COMSIG_HUMAN_PREFS_APPLIED, PROC_REF(on_prefs_applied))
 	RegisterSignal(H, COMSIG_LIVING_ELECTROCUTE_ACT, PROC_REF(on_electrocute))
 
-	// Инициализируем операционную систему IPC
-	if(!ipc_os)
-		ipc_os = new /datum/ipc_operating_system(H, ipc_brand_key)
-	if(ipc_preset_os_password && length(ipc_preset_os_password) >= 1)
-		ipc_os.set_password(ipc_preset_os_password)
-		ipc_os.logged_in = TRUE
-	var/datum/action/innate/ipc_open_os/os_action = new()
-	os_action.os_system = ipc_os
-	os_action.Grant(H)
-
 	// Абилка смены экрана — только для брендов, поддерживающих экраны
 	if(ipc_brand_key != "zeng_hu" && ipc_brand_key != "cybersun")
 		var/datum/action/innate/ipc_change_face/face_action = new()
@@ -217,19 +202,12 @@
 	if(hack)
 		hack.Remove(H)
 
-	var/datum/action/innate/ipc_open_os/os_action = locate() in H.actions
-	if(os_action)
-		os_action.Remove(H)
-
 	var/datum/action/innate/ipc_change_face/face_action = locate() in H.actions
 	if(face_action)
 		face_action.Remove(H)
 
 	// Убираем механики поколения
 	remove_generation(H)
-
-	// Удаляем ОС
-	QDEL_NULL(ipc_os)
 
 	// Снимаем сигналы
 	UnregisterSignal(H, list(
@@ -560,9 +538,6 @@
 	SIGNAL_HANDLER
 	remove_generation(H)
 	apply_generation(H)
-	if(ipc_os && ipc_preset_os_password && length(ipc_preset_os_password) >= 1)
-		ipc_os.set_password(ipc_preset_os_password)
-		ipc_os.logged_in = TRUE
 	if(ipc_brand_key == "shellguard")
 		if(!(locate(/obj/item/implant/ipc/force_shield) in H.implants))
 			var/charger_zone = ipc_charger_arm_zone
