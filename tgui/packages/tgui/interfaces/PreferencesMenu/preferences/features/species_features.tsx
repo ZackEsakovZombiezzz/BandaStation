@@ -281,3 +281,55 @@ export const skrell_cloth_wrap_color: Feature<string> = {
   name: 'Ткань для щупалец: цвет',
   component: FeatureColorInput,
 };
+
+// MARK: IPC features
+export const feature_ipc_head_accessory: FeatureChoiced = {
+  name: 'Аксессуар головы',
+  component: (
+    props: FeatureValueProps<string, string, FeatureChoicedServerData>,
+  ) => {
+    return <FeatureDropdownInput buttons {...props} />;
+  },
+};
+
+export const feature_ipc_tail: FeatureChoiced = {
+  name: 'Хвост',
+  component: (
+    props: FeatureValueProps<string, string, FeatureChoicedServerData>,
+  ) => {
+    return <FeatureDropdownInput buttons {...props} />;
+  },
+};
+
+export const feature_ipc_charger_arm: FeatureChoiced = {
+  name: 'Рука зарядника',
+  component: (
+    props: FeatureValueProps<string, string, FeatureChoicedServerData>,
+  ) => {
+    return <FeatureDropdownInput buttons {...props} />;
+  },
+};
+
+export const feature_ipc_head_type: FeatureChoiced = {
+  name: 'Тип головы',
+  component: (
+    props: FeatureValueProps<string, string, FeatureChoicedServerData>,
+  ) => {
+    return <FeatureDropdownInput buttons {...props} />;
+  },
+};
+
+export const ipc_head_accessory_color: Feature<string> = {
+  name: 'Аксессуар головы - цвет',
+  component: FeatureColorInput,
+};
+
+export const ipc_tail_color: Feature<string> = {
+  name: 'Хвост - цвет',
+  component: FeatureColorInput,
+};
+
+export const ipc_tail_secondary_color: Feature<string> = {
+  name: 'Хвост - вторичный цвет',
+  component: FeatureColorInput,
+};
