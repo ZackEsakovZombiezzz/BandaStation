@@ -52,8 +52,6 @@
 #include "code/preferences/species_features/skrell/skrell_head_tentacle.dm"
 #include "code/preferences/species_features/Ipc/ipc_chassis.dm"
 #include "code/preferences/species_features/Ipc/ipc_chassis_brand_designs.dm"
-#include "code/preferences/species_features/Ipc/ipc_surgery.dm"
-#include "code/preferences/species_features/Ipc/ipc_surgery_limbs.dm"
 #include "code/preferences/species_features/Ipc/ipc_bodytype_system.dm"
 #include "code/preferences/species_features/Ipc/ipc_brands.dm"
 #include "code/preferences/species_features/Ipc/ipc_brand_effects.dm"
