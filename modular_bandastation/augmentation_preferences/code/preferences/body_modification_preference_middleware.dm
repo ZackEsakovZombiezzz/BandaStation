@@ -3,6 +3,7 @@
 		"apply_body_modification" = PROC_REF(apply_body_modification),
 		"remove_body_modification" = PROC_REF(remove_body_modification),
 		"set_body_modification_manufacturer" = PROC_REF(set_body_modification_manufacturer),
+		"play_hover_sound" = PROC_REF(play_hover_sound),
 	)
 
 /datum/preference_middleware/body_modifications/get_ui_data(mob/user)
@@ -151,3 +152,14 @@
 	force_preview_rebuild()
 
 	return TRUE
+
+/// Проигрывает звук зависшего терминала при наведении на кнопку "Сообщить об ошибке" в меню КПБ.
+/// Возвращает FALSE — UI обновлять не нужно.
+/datum/preference_middleware/body_modifications/proc/play_hover_sound(list/params, mob/user)
+	if(!user?.client)
+		return FALSE
+	var/sound/S = sound('sound/machines/terminal/terminal_error.ogg')
+	S.volume = 45
+	S.wait = FALSE
+	user.client << S
+	return FALSE
