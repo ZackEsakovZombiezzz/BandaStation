@@ -112,6 +112,7 @@ const DEFAULT_CATEGORY_CONFIG = {
 export const BodyModificationsPage = (props: BodyModificationsProps) => {
   const serverData = useServerPrefs();
   const { data } = useBackend<PreferencesMenuData>();
+  const isIPC = data.character_preferences?.misc?.species === 'ipc';
 
   if (!serverData) {
     return <LoadingScreen />;
@@ -171,6 +172,32 @@ export const BodyModificationsPage = (props: BodyModificationsProps) => {
             Закрыть
           </Button>
         </Box>
+
+        {/* WIP-баннер для КПБ */}
+        {isIPC && (
+          <Box
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              padding: '0.5rem 1rem',
+              background: 'rgba(255, 180, 0, 0.08)',
+              borderBottom: '1px solid rgba(255, 180, 0, 0.35)',
+              color: '#ffb400',
+              fontSize: '0.8rem',
+              letterSpacing: '0.5px',
+            }}
+          >
+            <Icon name="wrench" />
+            <Box as="span" bold>
+              КПБ — В РАЗРАБОТКЕ.
+            </Box>
+            <Box as="span" style={{ color: '#a08040', fontWeight: 'normal' }}>
+              Система модификаций КПБ находится в разработке и будет доступна в
+              следующих обновлениях.
+            </Box>
+          </Box>
+        )}
 
         {/* Основной контент */}
         <BodyModificationsContent
