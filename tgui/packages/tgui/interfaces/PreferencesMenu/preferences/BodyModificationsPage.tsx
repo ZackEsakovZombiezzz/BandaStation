@@ -159,7 +159,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
         textTransform: 'uppercase',
       }}
     >
-      Дарк Индустриз™ — RipperDoc® Modification Suite v2.77
+      Dark Industries™ — RipperDoc® Modification Suite v2.77
     </Box>
 
     {/* Иконка */}
@@ -219,7 +219,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
         Предоставление услуг модификации тела лицам с неподтверждённым
         биологическим статусом невозможно согласно{' '}
         <Box as="span" style={{ color: '#00f0ff' }}>
-          п. 7.3 Пользовательского соглашения Дарк Индустриз
+          п. 7.3 Пользовательского соглашения Dark Industries
         </Box>
         .
       </Box>
