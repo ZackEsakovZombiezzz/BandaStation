@@ -153,12 +153,11 @@
 
 	return TRUE
 
-/// Проигрывает звук зависшего терминала при наведении на кнопку "Сообщить об ошибке" в меню КПБ.
 /// Возвращает FALSE — UI обновлять не нужно.
 /datum/preference_middleware/body_modifications/proc/play_hover_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/terminal/terminal_error.ogg')
+	var/sound/S = sound('sound/machines/terminal/image.wav')
 	S.volume = 45
 	S.wait = FALSE
 	user.client << S
