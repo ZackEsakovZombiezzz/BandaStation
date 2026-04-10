@@ -131,7 +131,7 @@ const DEFAULT_CATEGORY_CONFIG = {
   color: '#00f0ff',
 };
 
-// Экран ограничения доступа для КПБ
+// Экран ограничения доступа для КПБ (корпоративный стиль)
 const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
   <Box
     style={{
@@ -142,117 +142,154 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
       justifyContent: 'center',
       padding: '2rem',
       background:
-        'linear-gradient(135deg, rgba(20,0,0,0.5) 0%, rgba(0,0,20,0.5) 100%)',
+        'linear-gradient(160deg, rgba(8,8,16,0.9) 0%, rgba(16,8,8,0.9) 100%)',
     }}
   >
-    {/* Строка состояния терминала */}
+    {/* Фирменная шапка */}
     <Box
       style={{
         fontFamily: 'monospace',
-        fontSize: '0.65rem',
+        fontSize: '0.6rem',
         color: '#ff2a6d',
-        marginBottom: '1.5rem',
+        marginBottom: '1.25rem',
         textAlign: 'center',
-        letterSpacing: '2px',
-        border: '1px solid rgba(255,42,109,0.4)',
-        padding: '0.3rem 1rem',
-        background: 'rgba(255,42,109,0.08)',
+        letterSpacing: '3px',
+        borderBottom: '1px solid rgba(255,42,109,0.25)',
+        paddingBottom: '0.5rem',
+        textTransform: 'uppercase',
       }}
     >
-      ■ RIPPERDOC v2.77 :: СИСТЕМНАЯ ОШИБКА ■
+      NovaCorp Medical™ — RipperDoc® Modification Suite v2.77
     </Box>
 
-    {/* Иконка КПБ */}
+    {/* Иконка */}
     <Icon
-      name="robot"
+      name="triangle-exclamation"
       style={{
-        fontSize: '4rem',
+        fontSize: '3rem',
         color: '#ff2a6d',
-        marginBottom: '0.75rem',
-        filter: 'drop-shadow(0 0 20px rgba(255,42,109,0.7))',
+        marginBottom: '0.6rem',
+        filter: 'drop-shadow(0 0 16px rgba(255,42,109,0.6))',
       }}
     />
+
+    {/* Заголовок ошибки */}
+    <Box
+      bold
+      style={{
+        fontSize: '0.85rem',
+        color: '#ff2a6d',
+        letterSpacing: '2px',
+        textTransform: 'uppercase',
+        marginBottom: '1.25rem',
+        textShadow: '0 0 10px rgba(255,42,109,0.5)',
+      }}
+    >
+      Неустановленная форма жизни обнаружена
+    </Box>
+
+    {/* Корпоративное письмо */}
+    <Box
+      style={{
+        maxWidth: '420px',
+        padding: '1rem 1.25rem',
+        background: 'rgba(0,0,0,0.45)',
+        border: '1px solid rgba(255,42,109,0.2)',
+        borderLeft: '3px solid rgba(255,42,109,0.5)',
+        borderRadius: '2px',
+        marginBottom: '1rem',
+        fontFamily: 'monospace',
+        fontSize: '0.78rem',
+        color: '#aaaaaa',
+        lineHeight: 1.7,
+      }}
+    >
+      <Box style={{ marginBottom: '0.6rem' }}>
+        Уважаемый клиент,
+      </Box>
+      <Box style={{ marginBottom: '0.6rem' }}>
+        Наша система не смогла верифицировать ваш биологический субстрат.
+        Идентификатор органики:{' '}
+        <Box as="span" style={{ color: '#ff2a6d' }}>
+          НЕ НАЙДЕН
+        </Box>
+        .
+      </Box>
+      <Box style={{ marginBottom: '0.6rem' }}>
+        Предоставление услуг модификации тела лицам с неподтверждённым
+        биологическим статусом невозможно согласно{' '}
+        <Box as="span" style={{ color: '#00f0ff' }}>
+          п. 7.3 Пользовательского соглашения NovaCorp
+        </Box>
+        .
+      </Box>
+      <Box>
+        Если вы считаете, что данное сообщение является ошибкой — просим
+        сообщить об этом нашим авторам по внутренней форме обратной связи.
+        Мы ценим каждого клиента.{' '}
+        <Box as="span" style={{ color: '#555' }}>
+          Даже того, чьё существование ставит под сомнение наши базы данных.
+        </Box>
+      </Box>
+    </Box>
 
     {/* Код ошибки */}
     <Box
       style={{
         fontFamily: 'monospace',
-        fontSize: '0.95rem',
-        color: '#ff2a6d',
-        marginBottom: '1.5rem',
-        textShadow: '0 0 12px rgba(255,42,109,0.8)',
-        letterSpacing: '3px',
-      }}
-    >
-      ERROR :: 0x4950430A
-    </Box>
-
-    {/* Основное сообщение */}
-    <Box
-      style={{
-        maxWidth: '380px',
-        textAlign: 'center',
-        padding: '1rem',
-        background: 'rgba(0,0,0,0.5)',
-        border: '1px solid rgba(255,42,109,0.3)',
-        borderRadius: '4px',
+        fontSize: '0.65rem',
+        color: '#555',
         marginBottom: '1.25rem',
+        letterSpacing: '1px',
       }}
     >
-      <Box
-        bold
-        style={{
-          color: '#e0e0e0',
-          marginBottom: '0.6rem',
-          fontSize: '0.95rem',
-          textTransform: 'uppercase',
-          letterSpacing: '1px',
-        }}
-      >
-        ПОЗИТРОННЫЙ КОНСТРУКТ ОБНАРУЖЕН
-      </Box>
-      <Box
-        style={{ fontSize: '0.82rem', color: '#8a8a9a', lineHeight: 1.6 }}
-      >
-        Протоколы органической хирургии несовместимы с КПБ-архитектурой.
-        Биологические имплантаты отклонены системой.
-      </Box>
-      <Box
-        style={{
-          marginTop: '0.75rem',
-          padding: '0.45rem 0.75rem',
-          background: 'rgba(0,240,255,0.06)',
-          border: '1px solid rgba(0,240,255,0.25)',
-          borderRadius: '3px',
-          fontSize: '0.78rem',
-          color: '#00f0ff',
-          letterSpacing: '0.5px',
-        }}
-      >
-        ► Используйте интерфейс настройки шасси КПБ
-      </Box>
+      ERR-0x4950430A · SESSION ID: {Math.floor(Math.random() * 0xffff).toString(16).toUpperCase().padStart(4, '0')} · REF: NOVACORP-RIPPERDOC
     </Box>
 
-    {/* Кнопка закрытия */}
-    <Box
-      style={{
-        padding: '0.5rem 1.5rem',
-        background: 'rgba(255,42,109,0.15)',
-        border: '1px solid rgba(255,42,109,0.5)',
-        borderRadius: '3px',
-        cursor: 'pointer',
-        color: '#ff2a6d',
-        fontWeight: 600,
-        letterSpacing: '1px',
-        textTransform: 'uppercase',
-        fontSize: '0.82rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-      }}
-      onClick={props.onClose}
-    >
-      <Icon name="times" /> Закрыть интерфейс
+    {/* Кнопки */}
+    <Box style={{ display: 'flex', gap: '0.75rem' }}>
+      <Box
+        style={{
+          padding: '0.45rem 1.2rem',
+          background: 'rgba(255,42,109,0.12)',
+          border: '1px solid rgba(255,42,109,0.4)',
+          borderRadius: '2px',
+          cursor: 'pointer',
+          color: '#ff2a6d',
+          fontWeight: 600,
+          letterSpacing: '1px',
+          textTransform: 'uppercase',
+          fontSize: '0.78rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          fontFamily: 'monospace',
+        }}
+        onClick={props.onClose}
+      >
+        <Icon name="times" /> Закрыть
+      </Box>
+      <Box
+        style={{
+          padding: '0.45rem 1.2rem',
+          background: 'rgba(0,0,0,0.3)',
+          border: '1px solid rgba(85,85,85,0.4)',
+          borderRadius: '2px',
+          cursor: 'not-allowed',
+          color: '#555',
+          fontWeight: 600,
+          letterSpacing: '1px',
+          textTransform: 'uppercase',
+          fontSize: '0.78rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          fontFamily: 'monospace',
+        }}
+        title="Форма обратной связи временно недоступна"
+      >
+        <Icon name="paper-plane" /> Сообщить об ошибке
+      </Box>
     </Box>
   </Box>
 );

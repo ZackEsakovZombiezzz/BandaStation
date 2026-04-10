@@ -85,6 +85,16 @@
 
 	return current_brands
 
+/// Принудительно пересоздаёт тело в превью персонажа.
+/// При смене производителя/модификации гарантирует чистую
+/// пересборку dummy-моба с последующим apply_prefs_to.
+/datum/preference_middleware/body_modifications/proc/force_preview_rebuild()
+	var/atom/movable/screen/map_view/char_preview/preview = preferences.character_preview_view
+	if(!preview)
+		return
+	QDEL_NULL(preview.body)
+	preview.update_body()
+
 /datum/preference_middleware/body_modifications/proc/apply_body_modification(list/params, mob/user)
 	var/key = params["body_modification_key"]
 	if(!key)
@@ -103,7 +113,10 @@
 	else
 		updated_preference[key] = modification.default_preference_value(params)
 
-	return preferences.update_preference(GLOB.preference_entries[/datum/preference/body_modifications], updated_preference)
+	var/result = preferences.update_preference(GLOB.preference_entries[/datum/preference/body_modifications], updated_preference)
+	if(result)
+		force_preview_rebuild()
+	return result
 
 /datum/preference_middleware/body_modifications/proc/remove_body_modification(list/params, mob/user)
 	var/body_modification_key = params["body_modification_key"]
@@ -115,7 +128,10 @@
 		return FALSE
 
 	body_modifications -= body_modification_key
-	return preferences.update_preference(GLOB.preference_entries[/datum/preference/body_modifications], body_modifications)
+	var/result = preferences.update_preference(GLOB.preference_entries[/datum/preference/body_modifications], body_modifications)
+	if(result)
+		force_preview_rebuild()
+	return result
 
 /datum/preference_middleware/body_modifications/proc/set_body_modification_manufacturer(list/params, mob/user)
 	var/key = params["body_modification_key"]
@@ -132,5 +148,6 @@
 
 	updated_preference[key] = modification.handle_ui_params(params)
 	preferences.update_preference(GLOB.preference_entries[/datum/preference/body_modifications], updated_preference)
+	force_preview_rebuild()
 
 	return TRUE
