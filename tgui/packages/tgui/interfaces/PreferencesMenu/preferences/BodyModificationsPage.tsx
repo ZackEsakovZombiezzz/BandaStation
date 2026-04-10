@@ -159,7 +159,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
         textTransform: 'uppercase',
       }}
     >
-      NovaCorp Medical™ — RipperDoc® Modification Suite v2.77
+      Дарк Индустриз™ — RipperDoc® Modification Suite v2.77
     </Box>
 
     {/* Иконка */}
@@ -219,7 +219,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
         Предоставление услуг модификации тела лицам с неподтверждённым
         биологическим статусом невозможно согласно{' '}
         <Box as="span" style={{ color: '#00f0ff' }}>
-          п. 7.3 Пользовательского соглашения NovaCorp
+          п. 7.3 Пользовательского соглашения Дарк Индустриз
         </Box>
         .
       </Box>
@@ -243,7 +243,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
         letterSpacing: '1px',
       }}
     >
-      ERR-0x4950430A · SESSION ID: {Math.floor(Math.random() * 0xffff).toString(16).toUpperCase().padStart(4, '0')} · REF: NOVACORP-RIPPERDOC
+      ERR-0x4950430A · SESSION ID: {Math.floor(Math.random() * 0xffff).toString(16).toUpperCase().padStart(4, '0')} · REF: DARKINDUSTRIES-RIPPERDOC
     </Box>
 
     {/* Кнопки */}
