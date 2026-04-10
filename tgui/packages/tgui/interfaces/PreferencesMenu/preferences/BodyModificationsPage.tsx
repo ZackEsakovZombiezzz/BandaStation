@@ -4,7 +4,6 @@ import {
   Button,
   Icon,
   Modal,
-  Stack,
   Tooltip,
 } from 'tgui-core/components';
 
@@ -38,6 +37,28 @@ const MANUFACTURER_COLORS: Record<string, string> = {
   xion: '#9c27b0',
   'xion light': '#ce93d8',
   'zeng-hu': '#00bcd4',
+};
+
+// Краткие описания производителей (показываются при наведении на выбор)
+const MANUFACTURER_DESCRIPTIONS: Record<string, string> = {
+  none: 'Протез не установлен. Стандартная анатомия.',
+  general: 'Стандартный протез без фирменной маркировки.',
+  bishop: 'Биоинженерные протезы премиум-класса. Золотой стандарт медицинской хирургии. Непревзойдённая биосовместимость.',
+  'bishop mk2': 'Второе поколение линейки Bishop. Расширенный сенсорный диапазон, улучшенный отклик на нейросигналы.',
+  'bishop nano': 'Нанотехнологичная серия Bishop. Идеальна для высокоточных тонких работ.',
+  'etamin industry': 'Промышленные протезы Etamin. Высокая точность для технического и инженерного персонала.',
+  'etamin industry lumineux': 'Серия Lumineux от Etamin. Встроенная биолюминесцентная подсветка.',
+  gromtech: 'Надёжные протезы GromTech. Минимум электроники — максимум надёжности.',
+  hephaestus: 'Промышленные протезы Hephaestus Industries класса тяжёлых работ.',
+  'hephaestus titan': 'Серия Titan от Hephaestus. Боевой класс — максимальная прочность и давление.',
+  interdyne: 'Биосинтетические протезы Interdyne. Практически неотличимы от органики по ощущениям.',
+  morpheus: 'Экспериментальные футуристичные протезы Morpheus Cyberkinetics.',
+  shellguard: 'Тактические протезы военного класса Shellguard Munitions.',
+  wardtakahashi: 'Элегантный японский дизайн WardTakahashi. Стиль и функциональность.',
+  'wardtakahashi pro': 'Pro-серия WardTakahashi. Максимальные характеристики для профессионалов.',
+  xion: 'Компактные многоцелевые протезы Xion. Универсальное решение.',
+  'xion light': 'Облегчённая серия Xion. Быстро, дёшево, надёжно.',
+  'zeng-hu': 'Протезы Zeng-Hu Pharmaceuticals. Биосовместимость в приоритете.',
 };
 
 // Получить цвет производителя
@@ -110,6 +131,132 @@ const DEFAULT_CATEGORY_CONFIG = {
   color: '#00f0ff',
 };
 
+// Экран ограничения доступа для КПБ
+const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
+  <Box
+    style={{
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      background:
+        'linear-gradient(135deg, rgba(20,0,0,0.5) 0%, rgba(0,0,20,0.5) 100%)',
+    }}
+  >
+    {/* Строка состояния терминала */}
+    <Box
+      style={{
+        fontFamily: 'monospace',
+        fontSize: '0.65rem',
+        color: '#ff2a6d',
+        marginBottom: '1.5rem',
+        textAlign: 'center',
+        letterSpacing: '2px',
+        border: '1px solid rgba(255,42,109,0.4)',
+        padding: '0.3rem 1rem',
+        background: 'rgba(255,42,109,0.08)',
+      }}
+    >
+      ■ RIPPERDOC v2.77 :: СИСТЕМНАЯ ОШИБКА ■
+    </Box>
+
+    {/* Иконка КПБ */}
+    <Icon
+      name="robot"
+      style={{
+        fontSize: '4rem',
+        color: '#ff2a6d',
+        marginBottom: '0.75rem',
+        filter: 'drop-shadow(0 0 20px rgba(255,42,109,0.7))',
+      }}
+    />
+
+    {/* Код ошибки */}
+    <Box
+      style={{
+        fontFamily: 'monospace',
+        fontSize: '0.95rem',
+        color: '#ff2a6d',
+        marginBottom: '1.5rem',
+        textShadow: '0 0 12px rgba(255,42,109,0.8)',
+        letterSpacing: '3px',
+      }}
+    >
+      ERROR :: 0x4950430A
+    </Box>
+
+    {/* Основное сообщение */}
+    <Box
+      style={{
+        maxWidth: '380px',
+        textAlign: 'center',
+        padding: '1rem',
+        background: 'rgba(0,0,0,0.5)',
+        border: '1px solid rgba(255,42,109,0.3)',
+        borderRadius: '4px',
+        marginBottom: '1.25rem',
+      }}
+    >
+      <Box
+        bold
+        style={{
+          color: '#e0e0e0',
+          marginBottom: '0.6rem',
+          fontSize: '0.95rem',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+        }}
+      >
+        ПОЗИТРОННЫЙ КОНСТРУКТ ОБНАРУЖЕН
+      </Box>
+      <Box
+        style={{ fontSize: '0.82rem', color: '#8a8a9a', lineHeight: 1.6 }}
+      >
+        Протоколы органической хирургии несовместимы с КПБ-архитектурой.
+        Биологические имплантаты отклонены системой.
+      </Box>
+      <Box
+        style={{
+          marginTop: '0.75rem',
+          padding: '0.45rem 0.75rem',
+          background: 'rgba(0,240,255,0.06)',
+          border: '1px solid rgba(0,240,255,0.25)',
+          borderRadius: '3px',
+          fontSize: '0.78rem',
+          color: '#00f0ff',
+          letterSpacing: '0.5px',
+        }}
+      >
+        ► Используйте интерфейс настройки шасси КПБ
+      </Box>
+    </Box>
+
+    {/* Кнопка закрытия */}
+    <Box
+      style={{
+        padding: '0.5rem 1.5rem',
+        background: 'rgba(255,42,109,0.15)',
+        border: '1px solid rgba(255,42,109,0.5)',
+        borderRadius: '3px',
+        cursor: 'pointer',
+        color: '#ff2a6d',
+        fontWeight: 600,
+        letterSpacing: '1px',
+        textTransform: 'uppercase',
+        fontSize: '0.82rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+      }}
+      onClick={props.onClose}
+    >
+      <Icon name="times" /> Закрыть интерфейс
+    </Box>
+  </Box>
+);
+
 export const BodyModificationsPage = (props: BodyModificationsProps) => {
   const serverData = useServerPrefs();
   const { data } = useBackend<PreferencesMenuData>();
@@ -176,6 +323,7 @@ export const BodyModificationsPage = (props: BodyModificationsProps) => {
         {/* Основной контент */}
         <BodyModificationsContent
           bodyModifications={serverData.body_modifications || []}
+          handleClose={props.handleClose}
         />
       </Box>
     </Modal>
@@ -184,6 +332,7 @@ export const BodyModificationsPage = (props: BodyModificationsProps) => {
 
 type BodyModificationsContentProps = {
   bodyModifications: BodyModification[];
+  handleClose: () => void;
 };
 
 const BodyModificationsContent = (props: BodyModificationsContentProps) => {
@@ -193,6 +342,10 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
     incompatible_body_modifications = [],
   } = data;
 
+  // Вычисляем до хуков — нужно для useMemo ниже
+  const isIPC = data.character_preferences?.misc?.species === 'ipc';
+
+  // Все хуки вызываются безусловно (правила React)
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [selectedMod, setSelectedMod] = useState<BodyModification | null>(null);
 
@@ -201,22 +354,9 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
   const isAugmentedLimbCategory = (cat: string) =>
     AUGMENTED_LIMB_CATEGORIES.includes(cat);
 
-  // Проверяем, является ли персонаж IPC
-  const isIPC = data.character_preferences?.misc?.species === 'ipc';
-
-  // Категории, которые должны быть скрыты для не-IPC рас
+  // Категории и модификации, скрытые от не-IPC рас
   const IPC_ONLY_CATEGORIES = ['IPC Chassis', 'IPC Chassis (HEF)'];
-
-  // Модификации, которые должны быть скрыты для не-IPC рас (по ключу или названию)
-  const IPC_ONLY_MODIFICATIONS = [
-    'positronic',
-    'mmi',
-    'borg',
-    'ipc',
-    'позитронн',
-  ];
-
-  // Проверяем, является ли модификация IPC-специфичной
+  const IPC_ONLY_MODIFICATIONS = ['positronic', 'mmi', 'borg', 'ipc', 'позитронн'];
   const isIPCOnlyModification = (mod: BodyModification): boolean => {
     const lowerName = mod.name.toLowerCase();
     const lowerKey = mod.key.toLowerCase();
@@ -225,48 +365,40 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
     );
   };
 
-  // Группируем модификации по категориям
+  // Группируем модификации по категориям (для IPC — пустой результат, они увидят экран ограничения)
   const { categories, modificationsByCategory } = useMemo(() => {
-    const byCategory: Record<string, BodyModification[]> = {};
+    if (isIPC) return { categories: [] as string[], modificationsByCategory: {} as Record<string, BodyModification[]> };
 
+    const byCategory: Record<string, BodyModification[]> = {};
     props.bodyModifications.forEach((mod) => {
       const category = mod.category || 'Прочее';
-
-      // Пропускаем IPC-категории для не-IPC рас
-      if (!isIPC && IPC_ONLY_CATEGORIES.includes(category)) {
-        return;
-      }
-
-      // Пропускаем IPC-специфичные модификации для не-IPC рас
-      if (!isIPC && isIPCOnlyModification(mod)) {
-        return;
-      }
-
-      if (!byCategory[category]) {
-        byCategory[category] = [];
-      }
+      if (IPC_ONLY_CATEGORIES.includes(category)) return;
+      if (isIPCOnlyModification(mod)) return;
+      if (!byCategory[category]) byCategory[category] = [];
       byCategory[category].push(mod);
     });
 
-    // Сортируем категории по порядку
     const sortedCategories = Object.keys(byCategory).sort((a, b) => {
       const orderA = CATEGORY_CONFIG[a]?.order ?? DEFAULT_CATEGORY_CONFIG.order;
       const orderB = CATEGORY_CONFIG[b]?.order ?? DEFAULT_CATEGORY_CONFIG.order;
       return orderA - orderB;
     });
 
-    return {
-      categories: sortedCategories,
-      modificationsByCategory: byCategory,
-    };
+    return { categories: sortedCategories, modificationsByCategory: byCategory };
   }, [props.bodyModifications, isIPC]);
 
   // Установленные модификации
   const installedMods = useMemo(() => {
+    if (isIPC) return [] as BodyModification[];
     return props.bodyModifications.filter((mod) =>
       applied_body_modifications.includes(mod.key),
     );
-  }, [props.bodyModifications, applied_body_modifications]);
+  }, [props.bodyModifications, applied_body_modifications, isIPC]);
+
+  // Ранний выход для КПБ — после всех хуков
+  if (isIPC) {
+    return <IPCAccessDeniedScreen onClose={props.handleClose} />;
+  }
 
   // Общее количество отфильтрованных модификаций
   const filteredModsCount = useMemo(() => {
@@ -890,51 +1022,78 @@ const ModificationCard = (props: ModificationCardProps) => {
                   {manufacturers.map((brand: string) => {
                     const isSelected = brand === selectedManufacturer;
                     const brandColor = getManufacturerColor(brand);
+                    const brandDesc =
+                      MANUFACTURER_DESCRIPTIONS[brand.toLowerCase()];
                     return (
-                      <Box
+                      <Tooltip
                         key={brand}
-                        style={{
-                          padding: '0.5rem 0.75rem',
-                          fontSize: '0.8rem',
-                          color: isSelected ? '#00f0ff' : '#e0e0e0',
-                          background: isSelected
-                            ? 'rgba(0,240,255,0.15)'
-                            : 'transparent',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          borderLeft: `3px solid ${brandColor}`,
-                        }}
-                        onClick={() => {
-                          act('set_body_modification_manufacturer', {
-                            body_modification_key: modification.key,
-                            manufacturer: brand,
-                          });
-                          setDropdownOpen(false);
-                        }}
+                        content={
+                          brandDesc ? (
+                            <Box style={{ maxWidth: '200px' }}>
+                              <Box
+                                bold
+                                style={{
+                                  color: brandColor,
+                                  marginBottom: '0.25rem',
+                                  fontSize: '0.85rem',
+                                }}
+                              >
+                                {brand === 'None' ? 'Без протеза' : brand}
+                              </Box>
+                              <Box style={{ fontSize: '0.78rem', color: '#ccc' }}>
+                                {brandDesc}
+                              </Box>
+                            </Box>
+                          ) : (
+                            brand === 'None' ? 'Без протеза' : brand
+                          )
+                        }
+                        position="left"
                       >
-                        {/* Цветовой индикатор */}
                         <Box
                           style={{
-                            width: '8px',
-                            height: '8px',
-                            borderRadius: '50%',
-                            background: brandColor,
-                            boxShadow: `0 0 4px ${brandColor}`,
-                            flexShrink: 0,
+                            padding: '0.5rem 0.75rem',
+                            fontSize: '0.8rem',
+                            color: isSelected ? '#00f0ff' : '#e0e0e0',
+                            background: isSelected
+                              ? 'rgba(0,240,255,0.15)'
+                              : 'transparent',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            borderLeft: `3px solid ${brandColor}`,
                           }}
-                        />
-                        <span style={{ flex: 1 }}>
-                          {brand === 'None' ? 'Без протеза' : brand}
-                        </span>
-                        {isSelected && (
-                          <Icon
-                            name="check"
-                            style={{ color: '#00f0ff', fontSize: '0.75rem' }}
+                          onClick={() => {
+                            act('set_body_modification_manufacturer', {
+                              body_modification_key: modification.key,
+                              manufacturer: brand,
+                            });
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          {/* Цветовой индикатор */}
+                          <Box
+                            style={{
+                              width: '8px',
+                              height: '8px',
+                              borderRadius: '50%',
+                              background: brandColor,
+                              boxShadow: `0 0 4px ${brandColor}`,
+                              flexShrink: 0,
+                            }}
                           />
-                        )}
-                      </Box>
+                          <span style={{ flex: 1 }}>
+                            {brand === 'None' ? 'Без протеза' : brand}
+                          </span>
+                          {isSelected && (
+                            <Icon
+                              name="check"
+                              style={{ color: '#00f0ff', fontSize: '0.75rem' }}
+                            />
+                          )}
+                        </Box>
+                      </Tooltip>
                     );
                   })}
                 </Box>
