@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -132,167 +132,281 @@ const DEFAULT_CATEGORY_CONFIG = {
 };
 
 // Экран ограничения доступа для КПБ (корпоративный стиль)
-const IPCAccessDeniedScreen = (props: { onClose: () => void }) => (
-  <Box
-    style={{
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem',
-      background:
-        'linear-gradient(160deg, rgba(8,8,16,0.9) 0%, rgba(16,8,8,0.9) 100%)',
-    }}
-  >
-    {/* Фирменная шапка */}
+const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
+  const [reportHovered, setReportHovered] = useState(false);
+  const [glitchLabel, setGlitchLabel] = useState('Сообщить об ошибке');
+
+  const GLITCH_STRINGS = [
+    'Сообщить об ошибке',
+    'CONN_REFUSED',
+    '████████████',
+    'ERR_404',
+    '?#@!%&*░▒▓',
+    'SERVER_UNREACHABLE',
+    'Сообщить об ошибке',
+    'TIMEOUT::3000ms',
+    '01001110 01001111',
+    'NULL_PTR_EXCEPTION',
+    'Сообщить об ошибке',
+    '▓▒░ FATAL ░▒▓',
+    'SOCKET_CLOSED',
+    'Сообщить об ошибке',
+  ];
+
+  useEffect(() => {
+    if (!reportHovered) {
+      setGlitchLabel('Сообщить об ошибке');
+      return;
+    }
+    let i = 0;
+    const interval = setInterval(() => {
+      i = (i + 1) % GLITCH_STRINGS.length;
+      setGlitchLabel(GLITCH_STRINGS[i]);
+    }, 80);
+    return () => clearInterval(interval);
+  }, [reportHovered]);
+
+  return (
     <Box
       style={{
-        fontFamily: 'monospace',
-        fontSize: '0.6rem',
-        color: '#ff2a6d',
-        marginBottom: '1.25rem',
-        textAlign: 'center',
-        letterSpacing: '3px',
-        borderBottom: '1px solid rgba(255,42,109,0.25)',
-        paddingBottom: '0.5rem',
-        textTransform: 'uppercase',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+        background:
+          'linear-gradient(160deg, rgba(8,8,16,0.9) 0%, rgba(16,8,8,0.9) 100%)',
       }}
     >
-      Dark Industries™ — RipperDoc® Modification Suite v2.77
-    </Box>
+      {/* CSS-анимации для глитч-эффектов */}
+      <style>{`
+        @keyframes ipc-glitch-shake {
+          0%,100% { transform: translate(0,0) skewX(0deg); }
+          10%      { transform: translate(-3px,1px) skewX(-2deg); }
+          20%      { transform: translate(3px,-1px) skewX(1deg); }
+          30%      { transform: translate(-2px,2px) skewX(2deg); }
+          40%      { transform: translate(2px,-2px) skewX(-1deg); }
+          50%      { transform: translate(-3px,1px) skewX(3deg); }
+          60%      { transform: translate(3px,2px)  skewX(-2deg); }
+          70%      { transform: translate(-1px,-1px) skewX(1deg); }
+          80%      { transform: translate(1px,1px)  skewX(-3deg); }
+          90%      { transform: translate(-2px,-2px) skewX(2deg); }
+        }
+        @keyframes ipc-glitch-colors {
+          0%,100% { color: #555; text-shadow: none; }
+          15%     { color: #ff2a6d; text-shadow: 2px 0 #ff2a6d, -2px 0 #00ffff; }
+          30%     { color: #00ffff; text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+          45%     { color: #ffffff; text-shadow: 1px 1px #ff2a6d, -1px -1px #00f0ff; }
+          60%     { color: #ff2a6d; text-shadow: -3px 0 #ff2a6d, 3px 0 #00ffff; }
+          75%     { color: #ffff00; text-shadow: 2px -1px #ff0000, -2px 1px #0000ff; }
+          90%     { color: #555;    text-shadow: none; }
+        }
+        @keyframes ipc-glitch-border {
+          0%,100% { border-color: rgba(85,85,85,0.4); box-shadow: none; }
+          20%     { border-color: rgba(255,42,109,0.9); box-shadow: 0 0 8px rgba(255,42,109,0.6), inset 0 0 4px rgba(255,42,109,0.2); }
+          40%     { border-color: rgba(0,240,255,0.8); box-shadow: 0 0 6px rgba(0,240,255,0.5); }
+          60%     { border-color: rgba(255,255,0,0.7); box-shadow: 0 0 10px rgba(255,255,0,0.4); }
+          80%     { border-color: rgba(255,42,109,0.6); box-shadow: 0 0 4px rgba(255,42,109,0.3); }
+        }
+        @keyframes ipc-glitch-bg {
+          0%,100% { background: rgba(0,0,0,0.3); }
+          15%     { background: rgba(255,42,109,0.15); }
+          35%     { background: rgba(0,240,255,0.08); }
+          55%     { background: rgba(255,0,0,0.12); }
+          75%     { background: rgba(0,0,0,0.3); }
+          90%     { background: rgba(255,42,109,0.1); }
+        }
+        @keyframes ipc-glitch-icon {
+          0%,100% { transform: translate(0,0); filter: none; }
+          25%     { transform: translate(-2px,0); filter: hue-rotate(180deg) brightness(1.5); }
+          50%     { transform: translate(2px,0);  filter: hue-rotate(90deg); }
+          75%     { transform: translate(0,-1px); filter: hue-rotate(270deg) brightness(2); }
+        }
+      `}</style>
 
-    {/* Иконка */}
-    <Icon
-      name="triangle-exclamation"
-      style={{
-        fontSize: '3rem',
-        color: '#ff2a6d',
-        marginBottom: '0.6rem',
-        filter: 'drop-shadow(0 0 16px rgba(255,42,109,0.6))',
-      }}
-    />
-
-    {/* Заголовок ошибки */}
-    <Box
-      bold
-      style={{
-        fontSize: '0.85rem',
-        color: '#ff2a6d',
-        letterSpacing: '2px',
-        textTransform: 'uppercase',
-        marginBottom: '1.25rem',
-        textShadow: '0 0 10px rgba(255,42,109,0.5)',
-      }}
-    >
-      Неустановленная форма жизни обнаружена
-    </Box>
-
-    {/* Корпоративное письмо */}
-    <Box
-      style={{
-        maxWidth: '420px',
-        padding: '1rem 1.25rem',
-        background: 'rgba(0,0,0,0.45)',
-        border: '1px solid rgba(255,42,109,0.2)',
-        borderLeft: '3px solid rgba(255,42,109,0.5)',
-        borderRadius: '2px',
-        marginBottom: '1rem',
-        fontFamily: 'monospace',
-        fontSize: '0.78rem',
-        color: '#aaaaaa',
-        lineHeight: 1.7,
-      }}
-    >
-      <Box style={{ marginBottom: '0.6rem' }}>
-        Уважаемый клиент,
-      </Box>
-      <Box style={{ marginBottom: '0.6rem' }}>
-        Наша система не смогла верифицировать ваш биологический субстрат.
-        Идентификатор органики:{' '}
-        <Box as="span" style={{ color: '#ff2a6d' }}>
-          НЕ НАЙДЕН
-        </Box>
-        .
-      </Box>
-      <Box style={{ marginBottom: '0.6rem' }}>
-        Предоставление услуг модификации тела лицам с неподтверждённым
-        биологическим статусом невозможно согласно{' '}
-        <Box as="span" style={{ color: '#00f0ff' }}>
-          п. 7.3 Пользовательского соглашения Dark Industries
-        </Box>
-        .
-      </Box>
-      <Box>
-        Если вы считаете, что данное сообщение является ошибкой — просим
-        сообщить об этом нашим авторам по внутренней форме обратной связи.
-        Мы ценим каждого клиента.{' '}
-        <Box as="span" style={{ color: '#555' }}>
-          Даже того, чьё существование ставит под сомнение наши базы данных.
-        </Box>
-      </Box>
-    </Box>
-
-    {/* Код ошибки */}
-    <Box
-      style={{
-        fontFamily: 'monospace',
-        fontSize: '0.65rem',
-        color: '#555',
-        marginBottom: '1.25rem',
-        letterSpacing: '1px',
-      }}
-    >
-      ERR-0x4950430A · SESSION ID: {Math.floor(Math.random() * 0xffff).toString(16).toUpperCase().padStart(4, '0')} · REF: DARKINDUSTRIES-RIPPERDOC
-    </Box>
-
-    {/* Кнопки */}
-    <Box style={{ display: 'flex', gap: '0.75rem' }}>
+      {/* Фирменная шапка */}
       <Box
         style={{
-          padding: '0.45rem 1.2rem',
-          background: 'rgba(255,42,109,0.12)',
-          border: '1px solid rgba(255,42,109,0.4)',
-          borderRadius: '2px',
-          cursor: 'pointer',
+          fontFamily: 'monospace',
+          fontSize: '0.6rem',
           color: '#ff2a6d',
-          fontWeight: 600,
-          letterSpacing: '1px',
+          marginBottom: '1.25rem',
+          textAlign: 'center',
+          letterSpacing: '3px',
+          borderBottom: '1px solid rgba(255,42,109,0.25)',
+          paddingBottom: '0.5rem',
           textTransform: 'uppercase',
-          fontSize: '0.78rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          fontFamily: 'monospace',
         }}
-        onClick={props.onClose}
       >
-        <Icon name="times" /> Закрыть
+        Dark Industries™ — RipperDoc® Modification Suite v2.77
       </Box>
+
+      {/* Иконка */}
+      <Icon
+        name="triangle-exclamation"
+        style={{
+          fontSize: '3rem',
+          color: '#ff2a6d',
+          marginBottom: '0.6rem',
+          filter: 'drop-shadow(0 0 16px rgba(255,42,109,0.6))',
+          animation: reportHovered
+            ? 'ipc-glitch-icon 0.15s steps(1) infinite'
+            : 'none',
+        }}
+      />
+
+      {/* Заголовок ошибки */}
+      <Box
+        bold
+        style={{
+          fontSize: '0.85rem',
+          color: '#ff2a6d',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          marginBottom: '1.25rem',
+          textShadow: '0 0 10px rgba(255,42,109,0.5)',
+        }}
+      >
+        Неустановленная форма жизни обнаружена
+      </Box>
+
+      {/* Корпоративное письмо */}
       <Box
         style={{
-          padding: '0.45rem 1.2rem',
-          background: 'rgba(0,0,0,0.3)',
-          border: '1px solid rgba(85,85,85,0.4)',
+          maxWidth: '420px',
+          padding: '1rem 1.25rem',
+          background: 'rgba(0,0,0,0.45)',
+          border: '1px solid rgba(255,42,109,0.2)',
+          borderLeft: '3px solid rgba(255,42,109,0.5)',
           borderRadius: '2px',
-          cursor: 'not-allowed',
-          color: '#555',
-          fontWeight: 600,
-          letterSpacing: '1px',
-          textTransform: 'uppercase',
-          fontSize: '0.78rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
+          marginBottom: '1rem',
           fontFamily: 'monospace',
+          fontSize: '0.78rem',
+          color: '#aaaaaa',
+          lineHeight: 1.7,
         }}
-        title="Форма обратной связи временно недоступна"
       >
-        <Icon name="paper-plane" /> Сообщить об ошибке
+        <Box style={{ marginBottom: '0.6rem' }}>
+          Уважаемый клиент,
+        </Box>
+        <Box style={{ marginBottom: '0.6rem' }}>
+          Наша система не смогла верифицировать ваш биологический субстрат.
+          Идентификатор органики:{' '}
+          <Box as="span" style={{ color: '#ff2a6d' }}>
+            НЕ НАЙДЕН
+          </Box>
+          .
+        </Box>
+        <Box style={{ marginBottom: '0.6rem' }}>
+          Предоставление услуг модификации тела лицам с неподтверждённым
+          биологическим статусом невозможно согласно{' '}
+          <Box as="span" style={{ color: '#00f0ff' }}>
+            п. 7.3 Пользовательского соглашения Dark Industries
+          </Box>
+          .
+        </Box>
+        <Box>
+          Если вы считаете, что данное сообщение является ошибкой — просим
+          сообщить об этом нашим авторам по внутренней форме обратной связи.
+          Мы ценим каждого клиента.{' '}
+          <Box as="span" style={{ color: '#555' }}>
+            Даже того, чьё существование ставит под сомнение наши базы данных.
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Код ошибки */}
+      <Box
+        style={{
+          fontFamily: 'monospace',
+          fontSize: '0.65rem',
+          color: '#555',
+          marginBottom: '1.25rem',
+          letterSpacing: '1px',
+        }}
+      >
+        ERR-0x4950430A · SESSION ID: {Math.floor(Math.random() * 0xffff).toString(16).toUpperCase().padStart(4, '0')} · REF: DARKINDUSTRIES-RIPPERDOC
+      </Box>
+
+      {/* Кнопки */}
+      <Box style={{ display: 'flex', gap: '0.75rem' }}>
+        <Box
+          style={{
+            padding: '0.45rem 1.2rem',
+            background: 'rgba(255,42,109,0.12)',
+            border: '1px solid rgba(255,42,109,0.4)',
+            borderRadius: '2px',
+            cursor: 'pointer',
+            color: '#ff2a6d',
+            fontWeight: 600,
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            fontSize: '0.78rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            fontFamily: 'monospace',
+          }}
+          onClick={props.onClose}
+        >
+          <Icon name="times" /> Закрыть
+        </Box>
+
+        {/* Кнопка "Сообщить об ошибке" с глитч-эффектом при наведении */}
+        <Box
+          style={{
+            padding: '0.45rem 1.2rem',
+            background: reportHovered ? undefined : 'rgba(0,0,0,0.3)',
+            border: '1px solid rgba(85,85,85,0.4)',
+            borderRadius: '2px',
+            cursor: 'not-allowed',
+            color: '#555',
+            fontWeight: 600,
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            fontSize: '0.78rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            fontFamily: 'monospace',
+            minWidth: '10rem',
+            justifyContent: 'center',
+            userSelect: 'none',
+            animation: reportHovered
+              ? 'ipc-glitch-shake 0.1s steps(1) infinite, ipc-glitch-border 0.12s steps(1) infinite, ipc-glitch-bg 0.09s steps(1) infinite'
+              : 'none',
+          }}
+          title="Форма обратной связи временно недоступна"
+          onMouseEnter={() => setReportHovered(true)}
+          onMouseLeave={() => setReportHovered(false)}
+        >
+          <Icon
+            name="paper-plane"
+            style={{
+              animation: reportHovered
+                ? 'ipc-glitch-icon 0.07s steps(1) infinite'
+                : 'none',
+            }}
+          />
+          <Box
+            as="span"
+            style={{
+              animation: reportHovered
+                ? 'ipc-glitch-colors 0.08s steps(1) infinite'
+                : 'none',
+              display: 'inline-block',
+              minWidth: '7rem',
+              textAlign: 'center',
+            }}
+          >
+            {glitchLabel}
+          </Box>
+        </Box>
       </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
 export const BodyModificationsPage = (props: BodyModificationsProps) => {
   const serverData = useServerPrefs();
