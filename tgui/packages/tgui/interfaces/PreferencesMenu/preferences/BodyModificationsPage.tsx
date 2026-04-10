@@ -9,6 +9,7 @@ import {
 } from 'tgui-core/components';
 
 import { useBackend } from '../../../backend';
+import { CharacterPreview } from '../../common/CharacterPreview';
 import { LoadingScreen } from '../../common/LoadingScreen';
 import type { BodyModification, PreferencesMenuData } from '../types';
 import { useServerPrefs } from '../useServerPrefs';
@@ -118,7 +119,7 @@ export const BodyModificationsPage = (props: BodyModificationsProps) => {
   }
 
   return (
-    <Modal width="800px" height="600px">
+    <Modal width="880px" height="630px">
       <Box
         style={{
           background: 'linear-gradient(135deg, #0a0a12 0%, #1a1a24 100%)',
@@ -193,6 +194,12 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
   } = data;
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [selectedMod, setSelectedMod] = useState<BodyModification | null>(null);
+
+  // Категории с аугментированными конечностями — для них не показываем детальный превью предмета
+  const AUGMENTED_LIMB_CATEGORIES = ['Роботизация', 'Robotic', 'Ампутации', 'Amputations'];
+  const isAugmentedLimbCategory = (cat: string) =>
+    AUGMENTED_LIMB_CATEGORIES.includes(cat);
 
   // Проверяем, является ли персонаж IPC
   const isIPC = data.character_preferences?.misc?.species === 'ipc';
@@ -290,13 +297,12 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
       overflowY: 'auto' as const,
     },
     preview: {
-      width: '200px',
-      minWidth: '200px',
+      width: '240px',
+      minWidth: '240px',
       display: 'flex',
       flexDirection: 'column' as const,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '0.75rem',
+      alignItems: 'stretch',
+      padding: '0.5rem',
       background: 'transparent',
     },
     list: {
@@ -419,198 +425,192 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
         )}
       </Box>
 
-      {/* Центральная панель - Статус модификаций */}
+      {/* Центральная панель — кукла персонажа + предпросмотр модификации */}
       <Box style={panelStyles.preview}>
-        {/* Статусный дисплей в стиле Cyberpunk */}
+        {/* Заголовок панели */}
         <Box
           style={{
-            width: '100%',
-            padding: '1rem',
-            background:
-              'linear-gradient(180deg, rgba(255,42,109,0.1) 0%, rgba(0,0,0,0.3) 100%)',
-            border: '2px solid rgba(255,42,109,0.4)',
-            borderRadius: '4px',
+            fontSize: '0.65rem',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            color: '#8a8a9a',
+            textAlign: 'center',
+            marginBottom: '0.4rem',
+            fontWeight: 600,
           }}
         >
-          {/* Заголовок */}
+          ПРЕДПРОСМОТР
+        </Box>
+
+        {/* Кукла персонажа */}
+        <Box
+          style={{
+            border: '1px solid rgba(255,42,109,0.35)',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            background: 'rgba(0,0,0,0.4)',
+            marginBottom: '0.5rem',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <CharacterPreview height="270px" id={data.character_preview_view} />
+        </Box>
+
+        {/* Детали выбранной модификации (кроме аугментированных конечностей) */}
+        {selectedMod && !isAugmentedLimbCategory(selectedMod.category) ? (
           <Box
             style={{
-              textAlign: 'center',
-              marginBottom: '1rem',
-              paddingBottom: '0.75rem',
-              borderBottom: '1px solid rgba(255,42,109,0.3)',
+              flex: 1,
+              padding: '0.6rem',
+              background:
+                'linear-gradient(180deg, rgba(255,42,109,0.08) 0%, rgba(0,0,0,0.3) 100%)',
+              border: '1px solid rgba(255,42,109,0.3)',
+              borderRadius: '4px',
+              overflow: 'hidden',
             }}
           >
-            <Icon
-              name="user-astronaut"
-              style={{
-                fontSize: '2rem',
-                color: '#ff2a6d',
-                display: 'block',
-                marginBottom: '0.5rem',
-                filter: 'drop-shadow(0 0 10px rgba(255,42,109,0.5))',
-              }}
-            />
+            {/* Иконка категории */}
+            <Box style={{ textAlign: 'center', marginBottom: '0.4rem' }}>
+              <Icon
+                name={getCategoryConfig(selectedMod.category).icon}
+                style={{
+                  fontSize: '1.6rem',
+                  color: getCategoryConfig(selectedMod.category).color,
+                  filter: `drop-shadow(0 0 8px ${getCategoryConfig(selectedMod.category).color})`,
+                }}
+              />
+            </Box>
+            {/* Название */}
             <Box
               bold
               style={{
-                fontSize: '0.9rem',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                color: '#ff2a6d',
-                textShadow: '0 0 10px rgba(255,42,109,0.5)',
+                fontSize: '0.85rem',
+                color: '#e0e0e0',
+                textAlign: 'center',
+                marginBottom: '0.35rem',
+                lineHeight: 1.3,
               }}
             >
-              RIPPERDOC
+              {selectedMod.name}
+            </Box>
+            {/* Категория */}
+            <Box
+              style={{
+                fontSize: '0.65rem',
+                color: getCategoryConfig(selectedMod.category).color,
+                textTransform: 'uppercase',
+                textAlign: 'center',
+                letterSpacing: '0.5px',
+                marginBottom: '0.4rem',
+              }}
+            >
+              {selectedMod.category}
+            </Box>
+            {/* Описание */}
+            {selectedMod.description && (
+              <Box
+                style={{
+                  fontSize: '0.75rem',
+                  color: '#8a8a9a',
+                  lineHeight: 1.4,
+                  marginBottom: '0.4rem',
+                  borderTop: '1px solid rgba(255,42,109,0.15)',
+                  paddingTop: '0.4rem',
+                }}
+              >
+                {selectedMod.description}
+              </Box>
+            )}
+            {/* Стоимость */}
+            {selectedMod.cost !== undefined && selectedMod.cost > 0 && (
+              <Box
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.75rem',
+                }}
+              >
+                <Icon name="tag" style={{ color: '#ffc800' }} />
+                <Box as="span" style={{ color: '#8a8a9a' }}>
+                  Стоимость:
+                </Box>
+                <Box as="span" bold style={{ color: '#ffc800' }}>
+                  {selectedMod.cost}
+                </Box>
+              </Box>
+            )}
+          </Box>
+        ) : (
+          /* Компактная статистика когда нет выбранной модификации */
+          <Box style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.35rem 0.6rem',
+                background: 'rgba(57,255,20,0.1)',
+                border: '1px solid rgba(57,255,20,0.25)',
+                borderRadius: '3px',
+              }}
+            >
+              <Box
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.75rem',
+                  color: '#b0b0b0',
+                }}
+              >
+                <Icon name="check-circle" style={{ color: '#39ff14' }} />
+                Активно
+              </Box>
+              <Box bold style={{ fontSize: '1rem', color: '#39ff14' }}>
+                {installedMods.length}
+              </Box>
+            </Box>
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.35rem 0.6rem',
+                background: 'rgba(0,240,255,0.1)',
+                border: '1px solid rgba(0,240,255,0.25)',
+                borderRadius: '3px',
+              }}
+            >
+              <Box
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.75rem',
+                  color: '#b0b0b0',
+                }}
+              >
+                <Icon name="list" style={{ color: '#00f0ff' }} />
+                Доступно
+              </Box>
+              <Box bold style={{ fontSize: '1rem', color: '#00f0ff' }}>
+                {filteredModsCount}
+              </Box>
             </Box>
             <Box
               style={{
                 fontSize: '0.65rem',
-                color: '#8a8a9a',
-                marginTop: '0.25rem',
+                color: '#666',
+                textAlign: 'center',
+                marginTop: '0.3rem',
               }}
             >
-              СИСТЕМА МОДИФИКАЦИЙ
+              Выберите модификацию для просмотра
             </Box>
           </Box>
-
-          {/* Статистика */}
-          <Stack vertical>
-            {/* Установленные */}
-            <Stack.Item>
-              <Box
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.5rem 0.75rem',
-                  background: 'rgba(57,255,20,0.1)',
-                  border: '1px solid rgba(57,255,20,0.3)',
-                  borderRadius: '3px',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                <Box
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <Icon name="check-circle" style={{ color: '#39ff14' }} />
-                  <Box
-                    style={{
-                      fontSize: '0.8rem',
-                      color: '#e0e0e0',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Активно
-                  </Box>
-                </Box>
-                <Box
-                  bold
-                  style={{
-                    fontSize: '1.25rem',
-                    color: '#39ff14',
-                    textShadow: '0 0 10px rgba(57,255,20,0.5)',
-                  }}
-                >
-                  {installedMods.length}
-                </Box>
-              </Box>
-            </Stack.Item>
-
-            {/* Доступно */}
-            <Stack.Item>
-              <Box
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.5rem 0.75rem',
-                  background: 'rgba(0,240,255,0.1)',
-                  border: '1px solid rgba(0,240,255,0.3)',
-                  borderRadius: '3px',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                <Box
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <Icon name="list" style={{ color: '#00f0ff' }} />
-                  <Box
-                    style={{
-                      fontSize: '0.8rem',
-                      color: '#e0e0e0',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Доступно
-                  </Box>
-                </Box>
-                <Box
-                  bold
-                  style={{
-                    fontSize: '1.25rem',
-                    color: '#00f0ff',
-                    textShadow: '0 0 10px rgba(0,240,255,0.5)',
-                  }}
-                >
-                  {filteredModsCount}
-                </Box>
-              </Box>
-            </Stack.Item>
-
-            {/* Категорий */}
-            <Stack.Item>
-              <Box
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.5rem 0.75rem',
-                  background: 'rgba(255,200,0,0.1)',
-                  border: '1px solid rgba(255,200,0,0.3)',
-                  borderRadius: '3px',
-                }}
-              >
-                <Box
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <Icon name="folder" style={{ color: '#ffc800' }} />
-                  <Box
-                    style={{
-                      fontSize: '0.8rem',
-                      color: '#e0e0e0',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Категорий
-                  </Box>
-                </Box>
-                <Box
-                  bold
-                  style={{
-                    fontSize: '1.25rem',
-                    color: '#ffc800',
-                    textShadow: '0 0 10px rgba(255,200,0,0.5)',
-                  }}
-                >
-                  {categories.length}
-                </Box>
-              </Box>
-            </Stack.Item>
-          </Stack>
-        </Box>
+        )}
       </Box>
 
       {/* Правая панель - Список модификаций */}
@@ -650,6 +650,7 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
                       body_modification_key: mod.key,
                     })
                   }
+                  onSelect={() => setSelectedMod(mod)}
                 />
               ))
             ) : (
@@ -681,6 +682,7 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
                       body_modification_key: mod.key,
                     })
                   }
+                  onSelect={() => setSelectedMod(mod)}
                 />
               );
             })
@@ -702,10 +704,11 @@ type ModificationCardProps = {
   isIncompatible: boolean;
   onAdd: () => void;
   onRemove: () => void;
+  onSelect: () => void;
 };
 
 const ModificationCard = (props: ModificationCardProps) => {
-  const { modification, isInstalled, isIncompatible, onAdd, onRemove } = props;
+  const { modification, isInstalled, isIncompatible, onAdd, onRemove, onSelect } = props;
   const { act, data } = useBackend<PreferencesMenuData>();
   const [expanded, setExpanded] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -742,7 +745,7 @@ const ModificationCard = (props: ModificationCardProps) => {
         position: 'relative',
         opacity: isIncompatible ? 0.5 : 1,
       }}
-      onClick={() => setExpanded(!expanded)}
+      onClick={() => { setExpanded(!expanded); onSelect(); }}
     >
       {/* Индикатор установленной модификации */}
       {isInstalled && (
