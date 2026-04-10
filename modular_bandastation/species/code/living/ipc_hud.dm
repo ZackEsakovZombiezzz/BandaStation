@@ -136,9 +136,6 @@
 	if(!istype(H))
 		return
 	add_ipc_hud_elements(H)
-	// Добавляем HUD-элементы поколения (если нужны)
-	if(ipc_generation == IPC_GEN_HUMANITY)
-		add_gen3_hud(H)
 
 /datum/species/ipc/proc/add_ipc_hud_elements(mob/living/carbon/human/H)
 	if(!H.hud_used)
@@ -246,76 +243,3 @@
 		var/datum/species/ipc/S = H.dna.species
 		S.update_ipc_battery_icon(H)
 
-/// Обновляет HUD-элементы поколений (человечность Gen3, иконка модуля Gen1).
-/datum/species/ipc/proc/update_ipc_generation_hud(mob/living/carbon/human/H)
-	// Gen 3: обновляем иконку человечности
-	if(ipc_generation == IPC_GEN_HUMANITY)
-		for(var/atom/movable/screen/ipc_humanity/indicator in H.hud_used?.infodisplay)
-			indicator.humanity_value = humanity
-			if(humanity >= HUMANITY_PEAK)
-				indicator.icon_state = "humanity"
-			else if(humanity >= HUMANITY_LOW)
-				indicator.icon_state = "humanity_half"
-			else
-				indicator.icon_state = "humanity_lost"
-	// Gen 1: иконка модуля не изменяется в рантайме, поэтому не требует обновления каждый тик
-
-// ============================================
-// HUD: ИНДИКАТОР ЧЕЛОВЕЧНОСТИ (GEN III)
-// Показывается в позиции ui_mood вместо батареи у Gen III.
-// Но батарея всё равно нужна, поэтому человечность идёт отдельно.
-// Используем пустой слот — pixel offset отдельной иконки.
-// ============================================
-
-/atom/movable/screen/ipc_humanity
-	name = "humanity"
-	icon = 'modular_bandastation/species/icons/hud/ipc_ui.dmi'
-	icon_state = "humanity"
-	// ui_internal занят температурой, используем следующий слот выше (IPC не дышит и не ест)
-	screen_loc = "EAST-1:28,CENTER+2:21"
-	mouse_over_pointer = MOUSE_HAND_POINTER
-	var/humanity_value = 100
-
-/atom/movable/screen/ipc_humanity/Click()
-	if(!ismob(usr))
-		return
-	var/mob/living/carbon/human/H = usr
-	var/datum/species/ipc/S = H.dna?.species
-	if(!istype(S) || S.ipc_generation != IPC_GEN_HUMANITY)
-		return
-	var/status
-	if(S.humanity >= HUMANITY_PEAK)
-		status = "ПИКОВОЕ — максимальная эффективность"
-	else if(S.humanity >= HUMANITY_NORMAL)
-		status = "НОРМАЛЬНОЕ — стабильная работа"
-	else if(S.humanity >= HUMANITY_LOW)
-		status = "НИЗКОЕ — эффективность снижена"
-	else if(S.humanity >= HUMANITY_CRIT)
-		status = "КРИТИЧЕСКОЕ — нестабильность нарастает"
-	else
-		status = "ПОТЕРЯ КОНТРОЛЯ — система рушится"
-	to_chat(H, span_notice("==== ДИАГНОСТИКА: ЭМОЦИОНАЛЬНОЕ ЯДРО ====\nЧеловечность: [round(S.humanity)]% ([status])\nДеградация: [S.humanity_drug_active ? "ПРИОСТАНОВЛЕНА (препарат)" : "АКТИВНА (-[HUMANITY_DECAY_AMOUNT]% каждые [HUMANITY_DECAY_INTERVAL] сек)"]"))
-
-
-// ============================================
-// ИНТЕГРАЦИЯ: добавляем/убираем Gen-специфичные HUD элементы
-// ============================================
-
-/// Добавляет HUD-элементы поколения Gen III (человечность).
-/datum/species/ipc/proc/add_gen3_hud(mob/living/carbon/human/H)
-	if(!H.hud_used)
-		return
-	if(locate(/atom/movable/screen/ipc_humanity) in H.hud_used.infodisplay)
-		return
-	var/atom/movable/screen/ipc_humanity/hum = new(null, H.hud_used)
-	H.hud_used.infodisplay += hum
-	H.client?.screen += hum
-
-/// Убирает HUD-элементы поколения Gen III.
-/datum/species/ipc/proc/remove_gen3_hud(mob/living/carbon/human/H)
-	if(!H.hud_used)
-		return
-	for(var/atom/movable/screen/ipc_humanity/indicator in H.hud_used.infodisplay)
-		H.hud_used.infodisplay -= indicator
-		H.client?.screen -= indicator
-		qdel(indicator)

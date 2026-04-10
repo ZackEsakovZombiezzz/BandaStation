@@ -109,26 +109,9 @@
 	var/ipc_charger_arm_zone = BODY_ZONE_L_ARM
 	var/ipc_head_type = "monitor"
 
-	// Поколение КПБ
+	// Поколение КПБ (только косметическое)
 	var/ipc_generation = IPC_GEN_STANDARD
 	var/ipc_gen1_module = IPC_MODULE_SECURITY
-
-	// Gen 1: Переключение модуля
-	var/module_switch_target = ""
-	var/module_switch_start_time = 0
-	var/module_switch_last_threshold = 999
-
-	// Gen 3: Человечность
-	var/humanity = 100
-	var/last_humanity_decay_time = 0
-	var/humanity_drug_active = FALSE
-	var/humanity_drug_end_time = 0
-	var/humanity_drug_uses = 0
-	var/mentalin_uses = 0
-
-	// Gen 4: Кибердека
-	var/cyberdeck_disabled = FALSE
-	var/cyberdeck_reenable_time = 0
 
 /datum/species/ipc/get_species_description()
 	return "IPC (Integrated Positronic Construct) — синтетические гуманоидные формы жизни, управляемые позитронным вычислительным блоком (КПБ). \
@@ -177,9 +160,6 @@
 		var/datum/action/innate/ipc_change_face/face_action = new()
 		face_action.Grant(H)
 
-	// Применяем механики поколения
-	apply_generation(H)
-
 	// Нейтральный муд
 	if(H.mob_mood)
 		QDEL_NULL(H.mob_mood)
@@ -205,9 +185,6 @@
 	var/datum/action/innate/ipc_change_face/face_action = locate() in H.actions
 	if(face_action)
 		face_action.Remove(H)
-
-	// Убираем механики поколения
-	remove_generation(H)
 
 	// Снимаем сигналы
 	UnregisterSignal(H, list(
@@ -240,15 +217,6 @@
 	charge_cell.Invoke(bat.proxy_cell, seconds_per_tick)
 
 /datum/species/ipc/proc/handle_emp(mob/living/carbon/human/H, severity)
-	// Поколение I — особый ЭМИ (оглушение вместо паралича)
-	if(ipc_generation == IPC_GEN_MODULAR)
-		gen1_handle_emp(H, severity)
-		return
-	// Поколение II — Stun 1-3 сек + ожоги (без Paralyze)
-	if(ipc_generation == IPC_GEN_STANDARD)
-		gen2_handle_emp(H, severity)
-		return
-
 	var/emp_damage = 0
 	switch(severity)
 		if(EMP_HEAVY)
@@ -263,10 +231,6 @@
 	H.apply_damage(emp_damage * 0.5, BRUTE, forced = TRUE)
 	H.apply_damage(emp_damage * 0.5, BURN, forced = TRUE)
 	cpu_temperature = min(cpu_temperature + (emp_damage * 0.5), cpu_temp_critical)
-
-	// Поколение IV — кибердека отключается от ЭМИ
-	if(ipc_generation == IPC_GEN_CYBERDECK)
-		gen4_emp_disable_cyberdeck(H, severity)
 
 /obj/item/organ/brain/positronic/emp_act(severity)
 	. = ..()
@@ -367,8 +331,6 @@
 	handle_battery(H)
 	update_action_speed(H)
 	update_ipc_temperature_icon(H)
-	handle_generation_life(H, seconds_per_tick, times_fired)
-	update_ipc_generation_hud(H)
 
 // ============================================
 // САМОРЕМОНТ
@@ -536,8 +498,6 @@
 /// Вызывается после загрузки всех настроек персонажа.
 /datum/species/ipc/proc/on_prefs_applied(mob/living/carbon/human/H)
 	SIGNAL_HANDLER
-	remove_generation(H)
-	apply_generation(H)
 	if(ipc_brand_key == "shellguard")
 		if(!(locate(/obj/item/implant/ipc/force_shield) in H.implants))
 			var/charger_zone = ipc_charger_arm_zone
