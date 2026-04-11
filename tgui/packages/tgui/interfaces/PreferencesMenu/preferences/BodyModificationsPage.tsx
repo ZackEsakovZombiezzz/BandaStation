@@ -381,9 +381,12 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
           title="Форма обратной связи временно недоступна"
           onMouseEnter={() => {
             setReportHovered(true);
-            act('play_hover_sound');
+            act('start_hover_loop');
           }}
-          onMouseLeave={() => setReportHovered(false)}
+          onMouseLeave={() => {
+            setReportHovered(false);
+            act('stop_hover_loop');
+          }}
         >
           <Icon
             name="paper-plane"
@@ -436,10 +439,12 @@ const BOOT_TS = [
 const BOOT_DELAYS = [350, 620, 890, 1140, 1390, 1640, 2050, 2500];
 
 const RipperDocBootScreen = (props: { onComplete: () => void }) => {
+  const { act } = useBackend<PreferencesMenuData>();
   // 0 = только шапка, 1-6 = строки boot-лога, 7 = "ГОТОВО", 8 = завершено
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
+    act('play_boot_sound');
     const timers = BOOT_DELAYS.map((delay, i) =>
       setTimeout(() => {
         setPhase(i + 1);
@@ -905,7 +910,7 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
               alignItems: 'center',
               gap: '0.5rem',
             }}
-            onClick={() => setActiveCategory('__installed__')}
+            onClick={() => { act('play_click_sound'); setActiveCategory('__installed__'); }}
           >
             <Icon name="check-circle" color="#39ff14" size={1.1} />
             <span style={{ fontSize: '0.85rem' }}>Установлено</span>
@@ -945,7 +950,7 @@ const BodyModificationsContent = (props: BodyModificationsContentProps) => {
                 alignItems: 'center',
                 gap: '0.5rem',
               }}
-              onClick={() => setActiveCategory(category)}
+              onClick={() => { act('play_click_sound'); setActiveCategory(category); }}
             >
               <Icon
                 name={config.icon}
@@ -1298,7 +1303,7 @@ const ModificationCard = (props: ModificationCardProps) => {
         position: 'relative',
         opacity: isIncompatible ? 0.5 : 1,
       }}
-      onClick={() => { setExpanded(!expanded); onSelect(); }}
+      onClick={() => { act('play_click_sound'); setExpanded(!expanded); onSelect(); }}
     >
       {/* Индикатор установленной модификации */}
       {isInstalled && (
@@ -1401,7 +1406,7 @@ const ModificationCard = (props: ModificationCardProps) => {
                   justifyContent: 'space-between',
                   borderLeft: `3px solid ${getManufacturerColor(selectedManufacturer || 'general')}`,
                 }}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onClick={() => { act('play_click_sound'); setDropdownOpen(!dropdownOpen); }}
               >
                 {/* Цветовой индикатор */}
                 <Box
@@ -1486,6 +1491,7 @@ const ModificationCard = (props: ModificationCardProps) => {
                             borderLeft: `3px solid ${brandColor}`,
                           }}
                           onClick={() => {
+                            act('play_click_sound');
                             act('set_body_modification_manufacturer', {
                               body_modification_key: modification.key,
                               manufacturer: brand,
@@ -1540,7 +1546,7 @@ const ModificationCard = (props: ModificationCardProps) => {
                 letterSpacing: '0.5px',
                 whiteSpace: 'nowrap',
               }}
-              onClick={onRemove}
+              onClick={() => { act('play_click_sound'); onRemove(); }}
             >
               <Icon name="times" /> Удалить
             </Box>
@@ -1571,7 +1577,7 @@ const ModificationCard = (props: ModificationCardProps) => {
                   letterSpacing: '0.5px',
                   whiteSpace: 'nowrap',
                 }}
-                onClick={isIncompatible ? undefined : onAdd}
+                onClick={isIncompatible ? undefined : () => { act('play_click_sound'); onAdd(); }}
               >
                 <Icon name="plus" /> Установить
               </Box>

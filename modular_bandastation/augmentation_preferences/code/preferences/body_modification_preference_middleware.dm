@@ -3,7 +3,10 @@
 		"apply_body_modification" = PROC_REF(apply_body_modification),
 		"remove_body_modification" = PROC_REF(remove_body_modification),
 		"set_body_modification_manufacturer" = PROC_REF(set_body_modification_manufacturer),
-		"play_hover_sound" = PROC_REF(play_hover_sound),
+		"play_boot_sound" = PROC_REF(play_boot_sound),
+		"play_click_sound" = PROC_REF(play_click_sound),
+		"start_hover_loop" = PROC_REF(start_hover_loop),
+		"stop_hover_loop" = PROC_REF(stop_hover_loop),
 	)
 
 /datum/preference_middleware/body_modifications/get_ui_data(mob/user)
@@ -153,12 +156,43 @@
 
 	return TRUE
 
-/// Возвращает FALSE — UI обновлять не нужно.
-/datum/preference_middleware/body_modifications/proc/play_hover_sound(list/params, mob/user)
+/// Проигрывает звук загрузки при открытии интерфейса RipperDoc.
+/datum/preference_middleware/body_modifications/proc/play_boot_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/terminal/image.wav')
+	var/sound/S = sound('sound/effects/pai_boot.ogg')
+	S.volume = 50
+	S.wait = FALSE
+	user.client << S
+	return FALSE
+
+/// Проигрывает звук нажатия кнопки в обычном меню модификаций.
+/datum/preference_middleware/body_modifications/proc/play_click_sound(list/params, mob/user)
+	if(!user?.client)
+		return FALSE
+	var/sound/S = sound('sound/machines/click.ogg')
+	S.volume = 40
+	S.wait = FALSE
+	user.client << S
+	return FALSE
+
+/// Запускает зацикленный звук при наведении на кнопку "Сообщить об ошибке" в меню КПБ.
+/datum/preference_middleware/body_modifications/proc/start_hover_loop(list/params, mob/user)
+	if(!user?.client)
+		return FALSE
+	var/sound/S = sound('sound/machines/terminal/terminal_error.ogg')
 	S.volume = 45
 	S.wait = FALSE
+	S.repeat = TRUE
+	S.channel = 500
+	user.client << S
+	return FALSE
+
+/// Останавливает зацикленный звук кнопки "Сообщить об ошибке".
+/datum/preference_middleware/body_modifications/proc/stop_hover_loop(list/params, mob/user)
+	if(!user?.client)
+		return FALSE
+	var/sound/S = sound(null)
+	S.channel = 500
 	user.client << S
 	return FALSE
