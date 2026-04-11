@@ -160,7 +160,7 @@
 /datum/preference_middleware/body_modifications/proc/play_boot_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/effects/pai_boot.ogg')
+	var/sound/S = sound('sound/machines/launch1.ogg')
 	S.volume = 50
 	S.wait = FALSE
 	user.client << S
@@ -170,7 +170,7 @@
 /datum/preference_middleware/body_modifications/proc/play_click_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/click.ogg')
+	var/sound/S = sound('sound/machines/Select2.ogg')
 	S.volume = 40
 	S.wait = FALSE
 	user.client << S
@@ -180,7 +180,7 @@
 /datum/preference_middleware/body_modifications/proc/start_hover_loop(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/terminal/terminal_error.ogg')
+	var/sound/S = sound('sound/machines/terminal/Error.wav')
 	S.volume = 45
 	S.wait = FALSE
 	S.repeat = TRUE
