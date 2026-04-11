@@ -449,6 +449,7 @@ const RipperDocBootScreen = (props: { onComplete: () => void }) => {
       setTimeout(() => {
         setPhase(i + 1);
         if (i === BOOT_DELAYS.length - 1) {
+          act('play_boot_complete_sound');
           props.onComplete();
         }
       }, delay),
