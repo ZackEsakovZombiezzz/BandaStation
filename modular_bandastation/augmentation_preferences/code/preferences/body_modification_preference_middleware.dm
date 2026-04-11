@@ -161,7 +161,7 @@
 /datum/preference_middleware/body_modifications/proc/play_boot_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/launch1.ogg')
+	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/boot.ogg')
 	S.volume = 50
 	S.wait = FALSE
 	user.client << S
@@ -171,7 +171,7 @@
 /datum/preference_middleware/body_modifications/proc/play_boot_complete_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/terminal/terminal_success.ogg')
+	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/boot_complete.ogg')
 	S.volume = 55
 	S.wait = FALSE
 	user.client << S
@@ -181,7 +181,7 @@
 /datum/preference_middleware/body_modifications/proc/play_click_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/Select2.ogg')
+	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/click.ogg')
 	S.volume = 40
 	S.wait = FALSE
 	user.client << S
@@ -191,7 +191,7 @@
 /datum/preference_middleware/body_modifications/proc/start_hover_loop(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('sound/machines/terminal/Error.wav')
+	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/hover_loop.ogg')
 	S.volume = 45
 	S.wait = FALSE
 	S.repeat = TRUE
