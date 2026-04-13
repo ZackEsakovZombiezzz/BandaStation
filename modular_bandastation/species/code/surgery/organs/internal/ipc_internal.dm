@@ -3,6 +3,8 @@
 // ============================================
 
 /proc/ipc_heart_check_revive(mob/living/carbon/human/M)
+	if(!M.client)
+		return FALSE
 	var/obj/item/organ/brain/positronic/brain = M.get_organ_slot(ORGAN_SLOT_BRAIN)
 	if(!brain)
 		return FALSE
@@ -65,7 +67,7 @@
 			to_chat(owner, span_danger("Предупреждение: Обнаружено повреждение данных."))
 	if(ishuman(owner))
 		var/mob/living/carbon/human/H = owner
-		if(H.is_ipc())
+		if(IS_IPC(H))
 			var/datum/species/ipc/S = H.dna.species
 			S.handle_emp(H, severity)
 
