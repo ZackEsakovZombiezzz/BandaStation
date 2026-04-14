@@ -6,6 +6,7 @@
 		"play_boot_sound" = PROC_REF(play_boot_sound),
 		"play_boot_complete_sound" = PROC_REF(play_boot_complete_sound),
 		"play_click_sound" = PROC_REF(play_click_sound),
+		"play_install_sound" = PROC_REF(play_install_sound),
 		"play_deselect_sound" = PROC_REF(play_deselect_sound),
 		"start_hover_loop" = PROC_REF(start_hover_loop),
 		"stop_hover_loop" = PROC_REF(stop_hover_loop),
@@ -172,7 +173,7 @@
 /datum/preference_middleware/body_modifications/proc/play_boot_complete_sound(list/params, mob/user)
 	if(!user?.client)
 		return FALSE
-	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/loadingonesequence.ogg')
+	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/Launch2.ogg')
 	S.volume = 55
 	S.wait = FALSE
 	user.client << S
@@ -183,6 +184,16 @@
 	if(!user?.client)
 		return FALSE
 	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/Select2.ogg')
+	S.volume = 40
+	S.wait = FALSE
+	user.client << S
+	return FALSE
+
+/// Проигрывает звук подтверждения выбора/установки модификации.
+/datum/preference_middleware/body_modifications/proc/play_install_sound(list/params, mob/user)
+	if(!user?.client)
+		return FALSE
+	var/sound/S = sound('modular_bandastation/augmentation_preferences/sound/Select1.ogg')
 	S.volume = 40
 	S.wait = FALSE
 	user.client << S

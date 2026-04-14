@@ -21,22 +21,22 @@ type BodyModificationsProps = {
 const MANUFACTURER_COLORS: Record<string, string> = {
   none: '#666666',
   general: '#888888',
-  bishop: '#4caf50',
-  'bishop mk2': '#66bb6a',
-  'bishop nano': '#81c784',
-  'etamin industry': '#29b6f6',
-  'etamin industry lumineux': '#4fc3f7',
-  gromtech: '#8bc34a',
-  hephaestus: '#ff5722',
-  'hephaestus titan': '#d84315',
-  interdyne: '#e91e63',
-  morpheus: '#00d4ff',
-  shellguard: '#795548',
-  wardtakahashi: '#ffeb3b',
-  'wardtakahashi pro': '#ffd600',
-  xion: '#9c27b0',
-  'xion light': '#ce93d8',
-  'zeng-hu': '#00bcd4',
+  bishop: '#5b9bd5',
+  'bishop mk2': '#4a87c5',
+  'bishop nano': '#7ab5e5',
+  'etamin industry': '#c8a100',
+  'etamin industry lumineux': '#f0c060',
+  gromtech: '#6899c4',
+  hephaestus: '#3a6e3a',
+  'hephaestus titan': '#2d5a2d',
+  interdyne: '#00acc1',
+  morpheus: '#424242',
+  shellguard: '#c62828',
+  wardtakahashi: '#9e9e9e',
+  'wardtakahashi pro': '#757575',
+  xion: '#e65c00',
+  'xion light': '#ff9433',
+  'zeng-hu': '#ff9800',
 };
 
 // Краткие описания производителей (показываются при наведении на выбор)
@@ -1269,7 +1269,6 @@ type ModificationCardProps = {
 const ModificationCard = (props: ModificationCardProps) => {
   const { modification, isInstalled, isIncompatible, onAdd, onRemove, onSelect } = props;
   const { act, data } = useBackend<PreferencesMenuData>();
-  const [expanded, setExpanded] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const manufacturers = data.manufacturers?.[modification.key] || null;
@@ -1304,7 +1303,7 @@ const ModificationCard = (props: ModificationCardProps) => {
         position: 'relative',
         opacity: isIncompatible ? 0.5 : 1,
       }}
-      onClick={() => { act('play_click_sound'); setExpanded(!expanded); onSelect(); }}
+      onClick={() => { act('play_click_sound'); onSelect(); }}
     >
       {/* Индикатор установленной модификации */}
       {isInstalled && (
@@ -1492,7 +1491,7 @@ const ModificationCard = (props: ModificationCardProps) => {
                             borderLeft: `3px solid ${brandColor}`,
                           }}
                           onClick={() => {
-                            act('play_click_sound');
+                            act('play_install_sound');
                             act('set_body_modification_manufacturer', {
                               body_modification_key: modification.key,
                               manufacturer: brand,
@@ -1578,7 +1577,7 @@ const ModificationCard = (props: ModificationCardProps) => {
                   letterSpacing: '0.5px',
                   whiteSpace: 'nowrap',
                 }}
-                onClick={isIncompatible ? undefined : () => { act('play_click_sound'); onAdd(); }}
+                onClick={isIncompatible ? undefined : () => { act('play_install_sound'); onAdd(); }}
               >
                 <Icon name="plus" /> Установить
               </Box>
@@ -1587,37 +1586,6 @@ const ModificationCard = (props: ModificationCardProps) => {
         </Box>
       </Box>
 
-      {/* Развернутое описание */}
-      {expanded && modification.description && (
-        <Box
-          style={{
-            padding: '0 0.75rem 0.6rem',
-            borderTop: '1px solid rgba(0,240,255,0.1)',
-            marginTop: '0.4rem',
-            paddingTop: '0.4rem',
-          }}
-        >
-          <Box style={{ fontSize: '0.85rem', color: '#8a8a9a', lineHeight: 1.4 }}>
-            {modification.description}
-          </Box>
-          {modification.cost !== undefined && modification.cost > 0 && (
-            <Box
-              mt={0.4}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-            >
-              <Box as="span" style={{ fontSize: '0.8rem', color: '#8a8a9a' }}>
-                Стоимость:
-              </Box>
-              <Box
-                as="span"
-                style={{ fontSize: '0.85rem', color: '#ffc800', fontWeight: 600 }}
-              >
-                {modification.cost}
-              </Box>
-            </Box>
-          )}
-        </Box>
-      )}
     </Box>
   );
 };
