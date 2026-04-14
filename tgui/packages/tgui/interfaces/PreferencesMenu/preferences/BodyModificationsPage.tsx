@@ -1547,7 +1547,7 @@ const ModificationCard = (props: ModificationCardProps) => {
                 letterSpacing: '0.5px',
                 whiteSpace: 'nowrap',
               }}
-              onClick={() => { act('play_click_sound'); onRemove(); }}
+              onClick={() => { act('play_deselect_sound'); onRemove(); }}
             >
               <Icon name="times" /> Удалить
             </Box>
