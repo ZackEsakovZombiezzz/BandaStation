@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Box,
   Button,
@@ -442,10 +442,11 @@ const RipperDocBootScreen = (props: { onComplete: () => void }) => {
   const { act } = useBackend<PreferencesMenuData>();
   // 0 = только шапка, 1-6 = строки boot-лога, 7 = "ГОТОВО", 8 = завершено
   const [phase, setPhase] = useState(0);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
     act('play_boot_sound');
-    const timers = BOOT_DELAYS.map((delay, i) =>
+    timersRef.current = BOOT_DELAYS.map((delay, i) =>
       setTimeout(() => {
         setPhase(i + 1);
         if (i === BOOT_DELAYS.length - 1) {
@@ -454,8 +455,13 @@ const RipperDocBootScreen = (props: { onComplete: () => void }) => {
         }
       }, delay),
     );
-    return () => timers.forEach(clearTimeout);
+    return () => timersRef.current.forEach(clearTimeout);
   }, []);
+
+  const handleSkip = () => {
+    timersRef.current.forEach(clearTimeout);
+    props.onComplete();
+  };
 
   const progress = Math.min(
     100,
@@ -464,6 +470,7 @@ const RipperDocBootScreen = (props: { onComplete: () => void }) => {
 
   return (
     <Box
+      onClick={handleSkip}
       style={{
         flex: 1,
         display: 'flex',
@@ -474,6 +481,7 @@ const RipperDocBootScreen = (props: { onComplete: () => void }) => {
         fontFamily: 'monospace',
         position: 'relative',
         overflow: 'hidden',
+        cursor: 'pointer',
       }}
     >
       <style>{`
@@ -672,6 +680,22 @@ const RipperDocBootScreen = (props: { onComplete: () => void }) => {
             ◈ &nbsp; Система готова. Добро пожаловать, клиент. &nbsp; ◈
           </Box>
         )}
+      </Box>
+
+      {/* Подсказка «кликни для пропуска» */}
+      <Box
+        style={{
+          position: 'absolute',
+          bottom: '0.6rem',
+          right: '0.9rem',
+          fontSize: '0.55rem',
+          color: '#333',
+          letterSpacing: '1px',
+          userSelect: 'none',
+          zIndex: 3,
+        }}
+      >
+        [ НАЖМИТЕ ДЛЯ ПРОПУСКА ]
       </Box>
     </Box>
   );
