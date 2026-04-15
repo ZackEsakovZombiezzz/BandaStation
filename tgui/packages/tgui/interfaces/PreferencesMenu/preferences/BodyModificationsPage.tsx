@@ -679,10 +679,14 @@ const RipperDocBootScreen = (props: { onComplete: () => void }) => {
 
 // ─── Основная страница ────────────────────────────────────────────────────────
 
+// Флаг вне компонента — переживает закрытие/открытие модала.
+// Загрузочная анимация показывается только при первом открытии за сессию.
+let ripperDocBootPlayed = false;
+
 export const BodyModificationsPage = (props: BodyModificationsProps) => {
   const serverData = useServerPrefs();
   const { data } = useBackend<PreferencesMenuData>();
-  const [bootComplete, setBootComplete] = useState(false);
+  const [bootComplete, setBootComplete] = useState(ripperDocBootPlayed);
 
   if (!serverData) {
     return <LoadingScreen />;
@@ -745,7 +749,7 @@ export const BodyModificationsPage = (props: BodyModificationsProps) => {
 
         {/* Основной контент: сначала загрузка, затем меню */}
         {!bootComplete ? (
-          <RipperDocBootScreen onComplete={() => setBootComplete(true)} />
+          <RipperDocBootScreen onComplete={() => { ripperDocBootPlayed = true; setBootComplete(true); }} />
         ) : (
           <BodyModificationsContent
             bodyModifications={serverData.body_modifications || []}
