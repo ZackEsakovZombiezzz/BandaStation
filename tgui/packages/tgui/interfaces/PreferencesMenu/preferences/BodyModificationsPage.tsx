@@ -163,7 +163,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
     const interval = setInterval(() => {
       i = (i + 1) % GLITCH_STRINGS.length;
       setGlitchLabel(GLITCH_STRINGS[i]);
-    }, 80);
+    }, 200);
     return () => clearInterval(interval);
   }, [reportHovered]);
 
@@ -180,49 +180,32 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
           'linear-gradient(160deg, rgba(8,8,16,0.9) 0%, rgba(16,8,8,0.9) 100%)',
       }}
     >
-      {/* CSS-анимации для глитч-эффектов */}
+      {/* CSS-анимации для глитч-эффектов (безопасные: < 1 вспышки/с, без steps) */}
       <style>{`
         @keyframes ipc-glitch-shake {
-          0%,100% { transform: translate(0,0) skewX(0deg); }
-          10%      { transform: translate(-3px,1px) skewX(-2deg); }
-          20%      { transform: translate(3px,-1px) skewX(1deg); }
-          30%      { transform: translate(-2px,2px) skewX(2deg); }
-          40%      { transform: translate(2px,-2px) skewX(-1deg); }
-          50%      { transform: translate(-3px,1px) skewX(3deg); }
-          60%      { transform: translate(3px,2px)  skewX(-2deg); }
-          70%      { transform: translate(-1px,-1px) skewX(1deg); }
-          80%      { transform: translate(1px,1px)  skewX(-3deg); }
-          90%      { transform: translate(-2px,-2px) skewX(2deg); }
+          0%, 75%, 100% { transform: translate(0,0) skewX(0deg); }
+          77%  { transform: translate(-3px, 1px) skewX(-1.5deg); }
+          79%  { transform: translate(3px, -1px) skewX(1deg); }
+          81%  { transform: translate(-1px, 1px) skewX(1deg); }
+          83%  { transform: translate(0, 0) skewX(0deg); }
         }
         @keyframes ipc-glitch-colors {
-          0%,100% { color: #555; text-shadow: none; }
-          15%     { color: #ff2a6d; text-shadow: 2px 0 #ff2a6d, -2px 0 #00ffff; }
-          30%     { color: #00ffff; text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
-          45%     { color: #ffffff; text-shadow: 1px 1px #ff2a6d, -1px -1px #00f0ff; }
-          60%     { color: #ff2a6d; text-shadow: -3px 0 #ff2a6d, 3px 0 #00ffff; }
-          75%     { color: #ffff00; text-shadow: 2px -1px #ff0000, -2px 1px #0000ff; }
-          90%     { color: #555;    text-shadow: none; }
+          0%, 100% { color: #555; text-shadow: none; }
+          45%, 55% { color: #cc2255; text-shadow: 1px 0 rgba(200,40,80,0.5); }
         }
         @keyframes ipc-glitch-border {
-          0%,100% { border-color: rgba(85,85,85,0.4); box-shadow: none; }
-          20%     { border-color: rgba(255,42,109,0.9); box-shadow: 0 0 8px rgba(255,42,109,0.6), inset 0 0 4px rgba(255,42,109,0.2); }
-          40%     { border-color: rgba(0,240,255,0.8); box-shadow: 0 0 6px rgba(0,240,255,0.5); }
-          60%     { border-color: rgba(255,255,0,0.7); box-shadow: 0 0 10px rgba(255,255,0,0.4); }
-          80%     { border-color: rgba(255,42,109,0.6); box-shadow: 0 0 4px rgba(255,42,109,0.3); }
+          0%, 100% { border-color: rgba(85,85,85,0.4); box-shadow: none; }
+          50%      { border-color: rgba(255,42,109,0.7); box-shadow: 0 0 8px rgba(255,42,109,0.3); }
         }
         @keyframes ipc-glitch-bg {
-          0%,100% { background: rgba(0,0,0,0.3); }
-          15%     { background: rgba(255,42,109,0.15); }
-          35%     { background: rgba(0,240,255,0.08); }
-          55%     { background: rgba(255,0,0,0.12); }
-          75%     { background: rgba(0,0,0,0.3); }
-          90%     { background: rgba(255,42,109,0.1); }
+          0%, 100% { background: rgba(0,0,0,0.3); }
+          50%      { background: rgba(255,42,109,0.07); }
         }
         @keyframes ipc-glitch-icon {
-          0%,100% { transform: translate(0,0); filter: none; }
-          25%     { transform: translate(-2px,0); filter: hue-rotate(180deg) brightness(1.5); }
-          50%     { transform: translate(2px,0);  filter: hue-rotate(90deg); }
-          75%     { transform: translate(0,-1px); filter: hue-rotate(270deg) brightness(2); }
+          0%, 73%, 100% { transform: translate(0,0); filter: none; }
+          75%  { transform: translate(-2px, 0); filter: hue-rotate(25deg); }
+          78%  { transform: translate(2px, 0);  filter: hue-rotate(-25deg); }
+          81%  { transform: translate(0, 0);    filter: none; }
         }
       `}</style>
 
@@ -252,7 +235,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
           marginBottom: '0.6rem',
           filter: 'drop-shadow(0 0 16px rgba(255,42,109,0.6))',
           animation: reportHovered
-            ? 'ipc-glitch-icon 0.15s steps(1) infinite'
+            ? 'ipc-glitch-icon 3s ease infinite'
             : 'none',
         }}
       />
@@ -375,7 +358,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
             justifyContent: 'center',
             userSelect: 'none',
             animation: reportHovered
-              ? 'ipc-glitch-shake 0.1s steps(1) infinite, ipc-glitch-border 0.12s steps(1) infinite, ipc-glitch-bg 0.09s steps(1) infinite'
+              ? 'ipc-glitch-shake 2.4s ease infinite, ipc-glitch-border 2s ease-in-out infinite, ipc-glitch-bg 2s ease-in-out infinite'
               : 'none',
           }}
           title="Форма обратной связи временно недоступна"
@@ -392,7 +375,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
             name="paper-plane"
             style={{
               animation: reportHovered
-                ? 'ipc-glitch-icon 0.07s steps(1) infinite'
+                ? 'ipc-glitch-icon 3s ease infinite'
                 : 'none',
             }}
           />
@@ -400,7 +383,7 @@ const IPCAccessDeniedScreen = (props: { onClose: () => void }) => {
             as="span"
             style={{
               animation: reportHovered
-                ? 'ipc-glitch-colors 0.08s steps(1) infinite'
+                ? 'ipc-glitch-colors 2s ease-in-out infinite'
                 : 'none',
               display: 'inline-block',
               minWidth: '7rem',
