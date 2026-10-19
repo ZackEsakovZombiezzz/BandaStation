@@ -1,9 +1,9 @@
-// BANDASTATION ADD START - Перенос ИИ: физическая панель слотов и загрузка закона.
 import { capitalize } from 'es-toolkit';
 import { useState } from 'react';
 import {
   Box,
   Button,
+  DmIcon,
   Flex,
   Floating,
   Section,
@@ -11,10 +11,6 @@ import {
 } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
-import {
-  type LawIntrusionData,
-  LawIntrusionNotice,
-} from '../bandastation/ai_overhaul/LawIntrusionNotice';
 import { Window } from '../layouts';
 
 enum SlotSecurity {
@@ -35,19 +31,32 @@ type Linkable = {
   ref: string;
 };
 
-type Data = LawIntrusionData & {
+type Data = {
+  // All slots, including empty ones. Index 0 is the core slot if it exists.
   slots: SlotData[];
+  // If the ui viewer is holding a module
   holding_module: BooleanLike;
+  // If the ui viewer is holding a screwdriver
   holding_screwdriver: BooleanLike;
+  // If the ui viewer is holding a welder
   holding_welder: BooleanLike;
+  // If the ui viewer is holding a multitool
   holding_multitool: BooleanLike;
+  // If this rack has a core slot
   has_core_slot: BooleanLike;
+  // If the rack has no power
   depowered: BooleanLike;
+  // If we are a broadcaster: This represents our parent rack
   parent_rack?: Linkable;
+  // If we are a base: This is all silicons we can link to
   linkable_silicons?: Linkable[];
+  // If we are a broadcaster: This is all racks we can link to
   linkable_racks?: Linkable[];
+  // If we are a base: This is all silicons currently linked to us
   linked_mobs?: string[];
+  // Number of modules in all linked racks
   linked_rack_module_count?: number;
+  // If refresh is on cooldown
   refresh_cooldown: number;
 };
 
@@ -103,9 +112,9 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
           <LawSlotScrew
             tooltip={
               slot.security === SlotSecurity.SCREWED && !holding_screwdriver
-                ? 'Для откручивания модуля нужна отвёртка.'
+                ? 'You need a screwdriver to unscrew this module.'
                 : holding_screwdriver && slot.security === SlotSecurity.WELDED
-                  ? 'Сначала нужно срезать сварку, затем выкрутить винты.'
+                  ? `You can't remove the screws before unwelding it.`
                   : undefined
             }
             noscrew={slot.empty || slot.security === SlotSecurity.NONE}
@@ -125,11 +134,11 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
               fluid
               tooltip={
                 slot.security === SlotSecurity.WELDED && !holding_welder
-                  ? 'Перед извлечением модуля нужно срезать сварку.'
+                  ? `You can't remove this module before unwelding it.`
                   : holding_welder &&
                       slot.security === SlotSecurity.NONE &&
                       !slot.empty
-                    ? 'Перед сваркой закрепите модуль винтами.'
+                    ? 'Screw this module in place before welding.'
                     : undefined
               }
               className={
@@ -145,10 +154,10 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
               onClick={() => act('weld_module', { slot: index + 1 })}
             >
               {slot.security === SlotSecurity.WELDED
-                ? 'Приварено'
+                ? 'Welded'
                 : slot.empty
-                  ? slot.name || 'Пусто'
-                  : 'Приварить модуль'}
+                  ? slot.name || 'Empty'
+                  : 'Weld Module'}
             </Button>
           )}
           {slot.security !== SlotSecurity.WELDED && !!holding_multitool && (
@@ -160,36 +169,12 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
               disabled={!slot.ioned}
               onClick={() => act('multitool_module', { slot: index + 1 })}
             >
-              {' '}
-              Устранить ионные повреждения{' '}
+              Repair Ion Damage
             </Button>
           )}
           {slot.security !== SlotSecurity.WELDED &&
             !holding_multitool &&
-            !holding_welder &&
-            (data.holding_hacked_law && slot.empty ? (
-              <Button.Confirm
-                fluid
-                icon="plug"
-                disabled={
-                  !!data.law_intrusion_pending ||
-                  !!(has_core_slot && index === 0)
-                }
-                confirmContent="Начать загрузку приоритетного закона?"
-                key={`${data.hacked_law_ref}:${data.law_signature}:${data.law_intrusion_signature}:${index}`}
-                onClick={() =>
-                  act('insert_module', {
-                    slot: index + 1,
-                    module: data.hacked_law_ref,
-                    signature: data.law_intrusion_signature,
-                    law_signature: data.law_signature,
-                  })
-                }
-              >
-                {' '}
-                Подключить устройство{' '}
-              </Button.Confirm>
-            ) : (
+            !holding_welder && (
               <Button
                 height="100%"
                 textAlign="center"
@@ -197,7 +182,7 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
                 fluid
                 tooltip={
                   slot.security === SlotSecurity.SCREWED
-                    ? 'Перед извлечением модуля нужно выкрутить винты.'
+                    ? `You can't remove this module before unscrewing it.`
                     : undefined
                 }
                 disabled={
@@ -214,17 +199,17 @@ const LawSlot = (props: { slot: SlotData; index: number }) => {
                   )
                 }
               >
-                {slot.name || 'Пусто'}
+                {slot.name || 'Empty'}
               </Button>
-            ))}
+            )}
         </Flex.Item>
         <Flex.Item ml={1}>
           <LawSlotScrew
             tooltip={
               slot.security === SlotSecurity.SCREWED && !holding_screwdriver
-                ? 'Для откручивания модуля нужна отвёртка.'
+                ? 'You need a screwdriver to unscrew this module.'
                 : holding_screwdriver && slot.security === SlotSecurity.WELDED
-                  ? 'Сначала нужно срезать сварку, затем выкрутить винты.'
+                  ? `You can't remove the screws before unwelding it.`
                   : undefined
             }
             noscrew={slot.empty || slot.security === SlotSecurity.NONE}
@@ -353,6 +338,31 @@ const UnlinkableFloating = (props: {
   );
 };
 
+const AiFlavorDisplay = (props: { show_face: string }) => {
+  return (
+    <Box height="60px">
+      <DmIcon
+        icon="icons/obj/machines/status_display.dmi"
+        icon_state="entertainment_frame"
+        height="60px"
+        width="60px"
+        position="absolute"
+        left="10px"
+      />
+      {!!props.show_face && (
+        <DmIcon
+          icon="icons/obj/machines/status_display.dmi"
+          icon_state={props.show_face}
+          height="60px"
+          width="60px"
+          position="absolute"
+          left="10px"
+        />
+      )}
+    </Box>
+  );
+};
+
 const BroadcasterDisplay = () => {
   const { data, act } = useBackend<Data>();
   const { depowered, parent_rack, linkable_racks } = data;
@@ -363,10 +373,10 @@ const BroadcasterDisplay = () => {
       <Stack.Item width="50%">
         <Stack p={1} className="LawRack__Console" vertical>
           <Stack.Item>
-            &gt; <b>Связанная стойка:</b>
+            &gt; <b>Linked Rack:</b>
           </Stack.Item>
           <Stack.Item>
-            {parent_rack ? capitalize(parent_rack.name) : 'Нет данных'}
+            {parent_rack ? capitalize(parent_rack.name) : 'N/A'}
           </Stack.Item>
         </Stack>
       </Stack.Item>
@@ -379,17 +389,16 @@ const BroadcasterDisplay = () => {
               disabled={depowered || !parent_rack}
               tooltip={
                 depowered
-                  ? 'Нет питания!'
+                  ? 'No power!'
                   : parent_rack
                     ? undefined
-                    : 'Связанной стойки нет!'
+                    : 'No linked rack!'
               }
               fontFamily="monospace"
               color={depowered || !parent_rack ? 'grey' : 'black'}
               onClick={() => act('unlink_rack')}
             >
-              {' '}
-              &gt; Отвязать стойку{' '}
+              &gt; Unlink Rack
             </Button>
           </Stack.Item>
           <Stack.Item>
@@ -411,19 +420,18 @@ const BroadcasterDisplay = () => {
                   }
                   tooltip={
                     depowered
-                      ? 'Нет питания!'
+                      ? 'No power!'
                       : linkable_racks?.length
                         ? parent_rack
-                          ? 'Уже привязано!'
+                          ? 'Already linked!'
                           : undefined
-                        : 'Нет стоек для подключения!'
+                        : 'No linkable racks!'
                   }
                   fontFamily="monospace"
                   color={depowered || parent_rack ? 'grey' : 'black'}
                   onClick={() => setRackLink(!rackLink)}
                 >
-                  {' '}
-                  &gt; Новая привязка{' '}
+                  &gt; New Link
                 </Button>
               }
             />
@@ -446,10 +454,10 @@ const BaseDisplay = () => {
       <Stack.Item>
         <Stack p={1} className="LawRack__Console" vertical>
           <Stack.Item>
-            &gt; <b>Связанные синтетики:</b>
+            &gt; <b>Linked Silicons:</b>
           </Stack.Item>
           <Stack.Item style={{ wordBreak: 'break-word' }}>
-            {linked_mobs?.length ? linked_mobs.join(', ') : 'Нет данных'}
+            {linked_mobs?.length ? linked_mobs.join(', ') : 'N/A'}
           </Stack.Item>
         </Stack>
       </Stack.Item>
@@ -459,7 +467,7 @@ const BaseDisplay = () => {
             show_floating={siliconUnlink}
             unlinkable={linked_mobs || []}
             can_unlink={!depowered}
-            unlink_tooltip={depowered ? 'Нет питания!' : undefined}
+            unlink_tooltip={depowered ? 'No power!' : undefined}
             unlink_act={(index, name) =>
               act('unlink_silicon', {
                 silicon_index: index,
@@ -473,17 +481,16 @@ const BaseDisplay = () => {
                 disabled={!linked_mobs?.length || depowered}
                 tooltip={
                   depowered
-                    ? 'Нет питания!'
+                    ? 'No power!'
                     : linked_mobs?.length
                       ? undefined
-                      : 'Связанных синтетиков нет!'
+                      : 'No linked silicons!'
                 }
                 color={depowered || !linked_mobs?.length ? 'grey' : 'black'}
                 fontFamily="monospace"
                 onClick={() => setSiliconUnlink(!siliconUnlink)}
               >
-                {' '}
-                &gt; Управление связями{' '}
+                &gt; Manage Connections
               </Button>
             }
           />
@@ -506,12 +513,12 @@ const BaseDisplay = () => {
                   }
                   tooltip={
                     depowered
-                      ? 'Нет питания!'
+                      ? 'No power!'
                       : linkable_silicons?.length
                         ? parent_rack
-                          ? 'Привязано к другой стойке!'
+                          ? 'Linked to another rack!'
                           : undefined
-                        : 'Нет синтетиков для подключения!'
+                        : 'No linkable silicons!'
                   }
                   color={
                     depowered || !linkable_silicons?.length ? 'gray' : 'black'
@@ -519,8 +526,7 @@ const BaseDisplay = () => {
                   fontFamily="monospace"
                   onClick={() => setSiliconLink(!siliconLink)}
                 >
-                  {' '}
-                  &gt; Новое подключение{' '}
+                  &gt; New Connection
                 </Button>
               }
             />
@@ -536,23 +542,26 @@ export const LawRack = () => {
     depowered,
     linkable_racks,
     linked_mobs,
+    parent_rack,
     slots,
     refresh_cooldown,
+    has_core_slot,
     linked_rack_module_count,
   } = data;
 
+  const screen_display = () => {
+    if (depowered) {
+      return 'off';
+    }
+    if (parent_rack || linked_mobs?.length) {
+      return Math.round(Math.random() * 100) === 1 ? 'ai_hal' : 'ai_sal';
+    }
+    return 'ai_bsod';
+  };
+
   return (
-    <Window
-      title="Стойка модулей"
-      width={400}
-      height={
-        slots.length * 40 +
-        200 +
-        (data.holding_hacked_law || data.law_intrusion_pending ? 140 : 0)
-      }
-    >
-      <Window.Content scrollable>
-        <LawIntrusionNotice {...data} />
+    <Window title="Module Rack" width={400} height={slots.length * 40 + 200}>
+      <Window.Content>
         <Section>
           <Stack vertical>
             {slots.map((slot, index) => (
@@ -567,14 +576,14 @@ export const LawRack = () => {
                 p={0.5}
                 textAlign="center"
               >
-                <b>{linked_rack_module_count}</b> других модулей загружается
-                удалённо.{' '}
+                <b>{linked_rack_module_count}</b> other module(s) are being
+                loaded remotely.
               </Stack.Item>
             )}
           </Stack>
         </Section>
         <Section
-          title="Управление"
+          title="Controls"
           buttons={
             <Button
               icon="refresh"
@@ -582,10 +591,10 @@ export const LawRack = () => {
               tooltipPosition="left"
               tooltip={
                 depowered
-                  ? 'Нет питания!'
+                  ? 'No power!'
                   : refresh_cooldown > 0
-                    ? `Повтор через: ${Math.round(refresh_cooldown / 10)}s`
-                    : 'Обновить данные модулей и подключений.'
+                    ? `Cooldown: ${Math.round(refresh_cooldown / 10)}s`
+                    : 'Refreshes module and link data.'
               }
               onClick={() => act('refresh')}
             />
@@ -594,6 +603,11 @@ export const LawRack = () => {
           <Stack vertical>
             <Stack.Item>
               <Stack>
+                {!!has_core_slot && (
+                  <Stack.Item width="60px" mr={1} textAlign="center">
+                    <AiFlavorDisplay show_face={screen_display()} />
+                  </Stack.Item>
+                )}
                 {linkable_racks && (
                   <Stack.Item grow>
                     <BroadcasterDisplay />
@@ -612,4 +626,3 @@ export const LawRack = () => {
     </Window>
   );
 };
-// BANDASTATION ADD END - Перенос ИИ

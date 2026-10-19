@@ -211,17 +211,12 @@
 		RegisterSignal(hud_owner, COMSIG_HUD_Z_CHANGED, PROC_REF(update_z))
 		update_z()
 
-// BANDASTATION ADD START - Перенос ИИ: документация изменённого API.
-/** Обновляет индикатор уровня по камере ИИ, включая размещение в физическом ядре. */
-// BANDASTATION ADD END - Перенос ИИ
 /atom/movable/screen/ai/floor_indicator/proc/update_z(datum/hud/source)
 	SIGNAL_HANDLER
 	var/mob/living/silicon/ai/ai = get_mob() //if you use this for anyone else i will find you
 	if(isnull(ai))
 		return
-	// BANDASTATION ADD START - Перенос ИИ: смена этажа камеры из физического ядра.
-	var/turf/locturf = ai.in_network_core() ? get_turf(ai.eyeobj) : get_turf(ai)
-	// BANDASTATION ADD END - Перенос ИИ
+	var/turf/locturf = isturf(ai.loc) ? get_turf(ai.eyeobj) : get_turf(ai) //must be a var cuz error
 	var/ai_z = locturf.z
 	var/text = "Level<br/>[ai_z]"
 	if(SSmapping.level_trait(ai_z, ZTRAIT_STATION))
@@ -244,18 +239,11 @@
 	context[SCREENTIP_CONTEXT_LMB] = "Go up a floor"
 	return CONTEXTUAL_SCREENTIP_SET
 
-// BANDASTATION ADD START - Перенос ИИ: документация изменённого API.
-/** Переключает уровень наблюдения камеры, сохраняя штатные проверки состояния ИИ. */
-// BANDASTATION ADD END - Перенос ИИ
 /atom/movable/screen/ai/go_up/Click(location,control,params)
-	// BANDASTATION ADD START - Перенос ИИ: смена этажа камеры из физического ядра.
-	var/mob/living/silicon/ai/ai = get_mob()
-	// BANDASTATION ADD END - Перенос ИИ
+	var/mob/ai = get_mob() //the core
 	flick("uppressed",src)
-	// BANDASTATION ADD START - Перенос ИИ: смена этажа камеры из физического ядра.
-	if(!ai.in_network_core() || usr != ai)
+	if(!isturf(ai.loc) || usr != ai) //aicard and stuff
 		return
-	// BANDASTATION ADD END - Перенос ИИ
 	ai.up()
 
 /atom/movable/screen/ai/go_up/down
@@ -267,16 +255,9 @@
 	context[SCREENTIP_CONTEXT_LMB] = "Go down a floor"
 	return CONTEXTUAL_SCREENTIP_SET
 
-// BANDASTATION ADD START - Перенос ИИ: документация изменённого API.
-/** Переключает уровень наблюдения камеры, сохраняя штатные проверки состояния ИИ. */
-// BANDASTATION ADD END - Перенос ИИ
 /atom/movable/screen/ai/go_up/down/Click(location,control,params)
-	// BANDASTATION ADD START - Перенос ИИ: смена этажа камеры из физического ядра.
-	var/mob/living/silicon/ai/ai = get_mob()
-	// BANDASTATION ADD END - Перенос ИИ
+	var/mob/ai = get_mob() //the core
 	flick("downpressed",src)
-	// BANDASTATION ADD START - Перенос ИИ: смена этажа камеры из физического ядра.
-	if(!ai.in_network_core() || usr != ai)
+	if(!isturf(ai.loc) || usr != ai) //aicard and stuff
 		return
-	// BANDASTATION ADD END - Перенос ИИ
 	ai.down()

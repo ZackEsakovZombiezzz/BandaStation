@@ -1,8 +1,6 @@
-// BANDASTATION ADD START - Перенос ИИ: русские сообщения программы восстановления.
-/** Обслуживает физический слот intelliCard на модульном компьютере. */
 /datum/computer_file/program/ai_restorer
 	filename = "ai_restore"
-	filedesc = "Управление и восстановление ИИ"
+	filedesc = "AI Manager & Restorer"
 	downloader_category = PROGRAM_CATEGORY_SCIENCE
 	program_open_overlay = "generic"
 	extended_desc = "Специальный инструмент для восстановления прошивки, способный восстанавливать поврежденные системы ИИ. Требуется прямое подключение к ИИ через слот интел-карты."
@@ -17,20 +15,18 @@
 	/// Variable dictating if we are in the process of restoring the AI in the inserted intellicard
 	var/restoring = FALSE
 
-/** Добавляет физический слот карты программы восстановления в осмотр компьютера. */
 /datum/computer_file/program/ai_restorer/on_examine(obj/item/modular_computer/source, mob/user)
 	var/list/examine_text = list()
 	if(!stored_card)
-		examine_text += "Установлен разъём для intelliCard."
+		examine_text += "It has a slot installed for an intelliCard."
 		return examine_text
 
 	if(computer.Adjacent(user))
-		examine_text += "В разъёме для intelliCard установлена [stored_card.declent_ru(NOMINATIVE)]."
+		examine_text += "It has a slot installed for an intelliCard which contains: [stored_card.name]"
 	else
-		examine_text += "В разъёме для intelliCard находится карта."
-	examine_text += span_info("Alt-клик — извлечь intelliCard.")
+		examine_text += "It has a slot installed for an intelliCard, which appears to be occupied."
+	examine_text += span_info("Alt-click to eject the intelliCard.")
 	return examine_text
-// BANDASTATION ADD END - Перенос ИИ
 
 /datum/computer_file/program/ai_restorer/kill_program(mob/user)
 	try_eject(forced = TRUE)
@@ -65,35 +61,32 @@
 	if(istype(tool, /obj/item/aicard))
 		return aicard_act(user, tool)
 
-// BANDASTATION ADD START - Перенос ИИ: русские сообщения программы восстановления.
-/** Устанавливает карту в программу восстановления, проверяя физический доступ и занятость слота. */
 /datum/computer_file/program/ai_restorer/proc/aicard_act(mob/living/user, obj/item/aicard/used_aicard)
 	if(!computer)
 		return NONE
 	if(stored_card)
-		to_chat(user, span_warning("Вы пытаетесь вставить [used_aicard.declent_ru(ACCUSATIVE)] в [computer.declent_ru(ACCUSATIVE)], но разъём занят."))
+		to_chat(user, span_warning("You try to insert \the [used_aicard] into \the [computer.name], but the slot is occupied."))
 		return ITEM_INTERACT_BLOCKING
 	if(!user.transferItemToLoc(used_aicard, computer))
 		return ITEM_INTERACT_BLOCKING
 
 	stored_card = used_aicard
-	to_chat(user, span_notice("Вы вставляете [used_aicard.declent_ru(ACCUSATIVE)] в [computer.declent_ru(ACCUSATIVE)]."))
+	to_chat(user, span_notice("You insert \the [used_aicard] into \the [computer.name]."))
 	return ITEM_INTERACT_SUCCESS
 
-/** Извлекает исходную карту и прекращает несовместимые операции восстановления. */
 /datum/computer_file/program/ai_restorer/try_eject(mob/living/user, forced = FALSE)
 	if(!stored_card)
 		if(user)
-			to_chat(user, span_warning("В [computer.declent_ru(PREPOSITIONAL)] нет карты."))
+			to_chat(user, span_warning("There is no card in \the [computer.name]."))
 		return FALSE
 
 	if(restoring && !forced)
 		if(user)
-			to_chat(user, span_warning("Защитная блокировка не позволяет извлечь карту до завершения восстановления..."))
+			to_chat(user, span_warning("Safeties prevent you from removing the card until reconstruction is complete..."))
 		return FALSE
 
 	if(user && computer.Adjacent(user))
-		to_chat(user, span_notice("Вы извлекаете [stored_card.declent_ru(ACCUSATIVE)] из [computer.declent_ru(GENITIVE)]."))
+		to_chat(user, span_notice("You remove [stored_card] from [computer.name]."))
 		user.put_in_hands(stored_card)
 	else
 		stored_card.forceMove(computer.drop_location())
@@ -103,7 +96,6 @@
 	return TRUE
 
 
-/** Проверяет доступ и неизменность носителя перед выполнением команды восстановления. */
 /datum/computer_file/program/ai_restorer/ui_act(action, params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
 	switch(action)
@@ -113,14 +105,13 @@
 			var/mob/living/silicon/ai/A = stored_card.AI
 			if(A && A.health < 100)
 				restoring = TRUE
-				A.notify_revival("Ваши системные файлы восстанавливаются!", source = computer)
+				A.notify_revival("Your core files are being restored!", source = computer)
 			return TRUE
 		if("PRG_eject")
 			if(stored_card)
 				try_eject(usr)
 				return TRUE
 
-/** Передаёт состояние установленного носителя и доступные операции восстановления ИИ. */
 /datum/computer_file/program/ai_restorer/ui_data(mob/user)
 	var/list/data = list()
 
@@ -129,11 +120,11 @@
 	data["error"] = null
 
 	if(!stored_card)
-		data["error"] = "Вставьте intelliCard."
+		data["error"] = "Please insert an intelliCard."
 	else if(!stored_card.AI)
-		data["error"] = "ИИ не обнаружен..."
+		data["error"] = "No AI located..."
 	else if(stored_card.flush)
-		data["error"] = "Идёт очистка карты!"
+		data["error"] = "Flush in progress!"
 	else
 		data["name"] = stored_card.AI.name
 		data["restoring"] = restoring
@@ -142,4 +133,3 @@
 		data["laws"] = stored_card.AI.laws.get_law_list(include_zeroth = TRUE, render_html = FALSE)
 
 	return data
-// BANDASTATION ADD END - Перенос ИИ

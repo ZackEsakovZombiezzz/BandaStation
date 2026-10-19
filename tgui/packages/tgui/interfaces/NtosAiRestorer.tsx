@@ -1,14 +1,12 @@
-// BANDASTATION ADD START - Перенос ИИ: общая рабочая область восстановления на компьютере.
 import { NtosWindow } from '../layouts';
-import { AiRestorerWorkspace } from './AiRestorer';
+import { AiRestorerContent } from './AiRestorer';
 
-export const NtosAiRestorer = () => {
+export const NtosAiRestorer = (props) => {
   return (
-    <NtosWindow width={450} height={580}>
-      <NtosWindow.Content fitted className="AiOS">
-        <AiRestorerWorkspace />
+    <NtosWindow width={370} height={400}>
+      <NtosWindow.Content scrollable>
+        <AiRestorerContent />
       </NtosWindow.Content>
     </NtosWindow>
   );
 };
-// BANDASTATION ADD END - Перенос ИИ

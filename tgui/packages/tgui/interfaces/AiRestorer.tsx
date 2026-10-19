@@ -1,4 +1,3 @@
-// BANDASTATION ADD START - Перенос ИИ: оформление и состояния восстановления ИИ.
 import {
   Box,
   Button,
@@ -8,14 +7,13 @@ import {
   Section,
 } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
+
 import { useBackend } from '../backend';
-import { NetworkHeader } from '../bandastation/ai_overhaul/Common';
-import { NeuralShell } from '../bandastation/ai_overhaul/NeuralOS';
 import { Window } from '../layouts';
 
 type Data = {
   AI_present: BooleanLike;
-  error: string | null;
+  error: BooleanLike;
   name: string;
   laws: string[];
   isDead: BooleanLike;
@@ -26,39 +24,21 @@ type Data = {
 
 export const AiRestorer = () => {
   return (
-    <Window title="Терминал восстановления ИИ" width={450} height={550}>
-      <Window.Content fitted className="AiOS">
-        <AiRestorerWorkspace />
+    <Window width={370} height={360}>
+      <Window.Content scrollable>
+        <AiRestorerContent />
       </Window.Content>
     </Window>
   );
 };
 
-export const AiRestorerWorkspace = () => {
-  const { data } = useBackend<Data>();
-  return (
-    <NeuralShell
-      application="Восстановление ИИ"
-      telemetry={
-        data.AI_present && !data.error
-          ? {
-              integrityPercent: data.isDead ? 0 : data.health,
-            }
-          : undefined
-      }
-    >
-      <AiRestorerContent />
-    </NeuralShell>
-  );
-};
-
-export const AiRestorerContent = () => {
+export const AiRestorerContent = (props) => {
   const { act, data } = useBackend<Data>();
   const {
     AI_present,
     error,
     name,
-    laws = [],
+    laws,
     isDead,
     restoring,
     health,
@@ -67,58 +47,27 @@ export const AiRestorerContent = () => {
 
   return (
     <>
-      <NetworkHeader
-        compact
-        title={AI_present ? name || 'ИИ на карте' : 'Восстановление ИИ'}
-        subtitle="intelliCard / восстановление нейроструктуры"
-        signal={
-          AI_present && isDead
-            ? 'alert'
-            : restoring || (AI_present && error)
-              ? 'busy'
-              : AI_present && health < 70
-                ? 'degraded'
-                : 'nominal'
-        }
-        status={
-          !AI_present
-            ? 'ОЖИДАНИЕ ИИ'
-            : error
-              ? 'РАБОТА С КАРТОЙ ЗАБЛОКИРОВАНА'
-              : restoring
-                ? 'ВОССТАНОВЛЕНИЕ'
-                : isDead
-                  ? 'ИИ НЕ ФУНКЦИОНИРУЕТ'
-                  : 'ИИ ОТВЕЧАЕТ'
-        }
-      />
-      {!AI_present && !error && (
-        <NoticeBox info>
-          {' '}
-          Вставьте intelliCard с ИИ для проверки и восстановления.{' '}
-        </NoticeBox>
-      )}
       {error && <NoticeBox textAlign="center">{error}</NoticeBox>}
       {!!ejectable && (
         <Button
           fluid
           icon="eject"
-          content={AI_present ? name || 'Извлечь intelliCard' : '----------'}
-          disabled={!AI_present || !!restoring}
+          content={AI_present ? name : '----------'}
+          disabled={!AI_present}
           onClick={() => act('PRG_eject')}
         />
       )}
-      {!!AI_present && !error && (
+      {!!AI_present && (
         <Section
-          title={ejectable ? 'Состояние системы' : name}
+          title={ejectable ? 'System Status' : name}
           buttons={
             <Box inline bold color={isDead ? 'bad' : 'good'}>
-              {isDead ? 'Не функционирует' : 'Функционирует'}
+              {isDead ? 'Nonfunctional' : 'Functional'}
             </Box>
           }
         >
           <LabeledList>
-            <LabeledList.Item label="Целостность">
+            <LabeledList.Item label="Integrity">
               <ProgressBar
                 value={health}
                 minValue={0}
@@ -133,19 +82,18 @@ export const AiRestorerContent = () => {
           </LabeledList>
           {!!restoring && (
             <Box bold textAlign="center" fontSize="20px" color="good" mt={1}>
-              {' '}
-              ВОССТАНОВЛЕНИЕ В ПРОЦЕССЕ{' '}
+              RECONSTRUCTION IN PROGRESS
             </Box>
           )}
           <Button
             fluid
             icon="plus"
-            content="Начать восстановление"
-            disabled={!!restoring || health >= 100}
+            content="Begin Reconstruction"
+            disabled={restoring}
             mt={1}
             onClick={() => act('PRG_beginReconstruction')}
           />
-          <Section title="Законы">
+          <Section title="Laws">
             {laws.map((law) => (
               <Box key={law} className="candystripe">
                 {law}
@@ -157,4 +105,3 @@ export const AiRestorerContent = () => {
     </>
   );
 };
-// BANDASTATION ADD END - Перенос ИИ
